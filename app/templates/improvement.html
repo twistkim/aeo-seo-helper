@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+  <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-6">
+    네이버 블로그 분석 &amp; 개선안
+  </h1>
+
+  <div class="grid gap-8 lg:grid-cols-2">
+    <!-- 왼쪽: 입력 폼 -->
+    <div>
+      <div class="bg-white shadow-sm rounded-xl border border-slate-200 p-6 space-y-4">
+        <h2 class="text-lg font-semibold text-slate-800">분석 대상 입력</h2>
+        <p class="text-sm text-slate-500">
+          네이버 블로그 게시물 URL과 핵심 키워드를 입력하면,<br />
+          상위노출 기준에 따라 구조/키워드/규제 관점에서 진단하고 개선안을 제안합니다.
+        </p>
+
+        <form id="improvement-form" class="space-y-4">
+          <div>
+            <label for="blog_url" class="block text-sm font-medium text-slate-700 mb-1">
+              네이버 블로그 URL
+            </label>
+            <input
+              id="blog_url"
+              name="blog_url"
+              type="url"
+              required
+              placeholder="https://blog.naver.com/..."
+              class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 text-sm"
+            />
+          </div>
+
+          <div>
+            <label for="core_keyword" class="block text-sm font-medium text-slate-700 mb-1">
+              핵심 키워드
+            </label>
+            <input
+              id="core_keyword"
+              name="core_keyword"
+              type="text"
+              required
+              placeholder="예: L-PDRN 앰플, 수분크림, 탄력케어 등"
+              class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 text-sm"
+            />
+          </div>
+
+          <div class="flex items-center justify-between pt-2">
+            <p class="text-xs text-slate-500">
+              * URL의 본문을 크롤링해 상위노출 기준으로 점검합니다.
+            </p>
+            <button
+              type="submit"
+              id="improvement-submit"
+              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:opacity-60"
+            >
+              분석 시작하기
+            </button>
+          </div>
+        </form>
+
+        <p id="improvement-error" class="mt-2 text-sm text-red-500 hidden"></p>
+      </div>
+    </div>
+
+    <!-- 오른쪽: 결과 영역 -->
+    <div>
+      <div class="bg-slate-900 rounded-xl shadow-inner p-4 sm:p-5 h-full flex flex-col">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-sm font-semibold text-slate-100">
+            분석 결과 (Markdown)
+          </h2>
+          <span
+            id="improvement-status"
+            class="text-xs text-slate-400"
+          >
+            URL과 키워드를 입력 후 분석을 시작하세요.
+          </span>
+        </div>
+
+        <div
+          id="improvement-result"
+          class="flex-1 rounded-lg bg-slate-950/70 border border-slate-800 p-3 text-xs sm:text-sm font-mono text-slate-100 overflow-auto whitespace-pre-wrap"
+        ></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const form = document.getElementById("improvement-form");
+  const submitBtn = document.getElementById("improvement-submit");
+  const resultEl = document.getElementById("improvement-result");
+  const statusEl = document.getElementById("improvement-status");
+  const errorEl = document.getElementById("improvement-error");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    errorEl.classList.add("hidden");
+    errorEl.textContent = "";
+
+    const formData = new FormData(form);
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "분석 중...";
+    statusEl.textContent = "Gemini가 블로그를 분석하는 중입니다...";
+    resultEl.textContent = "";
+
+    try {
+      const res = await fetch("/improvement", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!data.success) {
+        throw new Error(data.error || "분석 중 알 수 없는 오류가 발생했습니다.");
+      }
+
+      // 서버에서 받은 마크다운 텍스트를 그대로 표시 (whitespace-pre-wrap + mono)
+      resultEl.textContent = data.analysis || "";
+      statusEl.textContent = "분석 완료. 아래 내용을 확인하세요.";
+    } catch (err) {
+      console.error(err);
+      errorEl.textContent = err.message || "분석에 실패했습니다.";
+      errorEl.classList.remove("hidden");
+      statusEl.textContent = "오류가 발생했습니다. 다시 시도해보세요.";
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "분석 시작하기";
+    }
+  });
+</script>
+{% endblock %}

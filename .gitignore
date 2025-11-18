@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual Env
+.venv/
+
+# Mac
+.DS_Store
+
+# Local environment
+.env
+
+# Uvicorn / logs
+*.log

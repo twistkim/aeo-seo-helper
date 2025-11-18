@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- 상단 인사 -->
+  <div class="mb-8">
+    <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">
+      마이페이지
+    </h1>
+    <p class="mt-2 text-sm text-slate-500">
+      {{ user.email }} 님이 AEO SEO Helper에서 작업한
+      <span class="font-semibold">블로그 원고</span>와
+      <span class="font-semibold">순위 모니터링 기록</span>을 한 번에 확인할 수 있는 공간입니다.
+    </p>
+  </div>
+
+  <!-- 1. 내가 생성한 블로그 원고 -->
+  <section class="mb-10">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-lg font-semibold text-slate-900">
+        내가 생성한 블로그 원고
+      </h2>
+      <a
+        href="/generator"
+        class="text-xs text-sky-600 hover:text-sky-700 hover:underline"
+      >
+        새 원고 생성하기 →
+      </a>
+    </div>
+
+    {% if articles and articles|length > 0 %}
+    <div class="overflow-x-auto bg-white rounded-xl border border-slate-200 shadow-sm">
+      <table class="min-w-full text-sm">
+        <thead class="bg-slate-50">
+          <tr>
+            <th class="px-3 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+              생성일
+            </th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+              핵심 키워드
+            </th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+              제품명
+            </th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+              톤/페르소나
+            </th>
+            <th class="px-3 py-2 text-center text-xs font-medium text-slate-500 uppercase tracking-wider">
+              원고 보기
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          {% for article in articles %}
+          <tr class="hover:bg-slate-50 align-top">
+            <td class="px-3 py-2 whitespace-nowrap text-xs text-slate-500">
+              {{ article.created_at }}
+            </td>
+            <td class="px-3 py-2 whitespace-nowrap text-slate-800">
+              {{ article.core_keyword or "-" }}
+            </td>
+            <td class="px-3 py-2 whitespace-nowrap text-slate-800">
+              {{ article.product_name or "-" }}
+            </td>
+            <td class="px-3 py-2 whitespace-nowrap text-xs text-slate-600">
+              {% if article.tone or article.persona %}
+                {{ article.tone or "" }}{% if article.tone and article.persona %} / {% endif %}{{ article.persona or "" }}
+              {% else %}
+                -
+              {% endif %}
+            </td>
+            <td class="px-3 py-2 text-center">
+              <details class="inline-block text-left max-w-xs sm:max-w-md">
+                <summary class="cursor-pointer text-xs text-sky-600 hover:text-sky-700">
+                  내용 펼치기
+                </summary>
+                <div class="mt-2 max-h-64 overflow-y-auto border border-slate-200 rounded-md bg-slate-50 p-2 text-xs text-slate-700">
+                  <!-- generator에서 HTML로 저장했다면 safe로 렌더링 -->
+                  {{ article.content | safe }}
+                </div>
+              </details>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="text-sm text-slate-500">
+      아직 생성한 블로그 원고가 없습니다.
+      <a href="/generator" class="text-sky-600 hover:underline">원고 생성 페이지</a>에서 첫 글을 만들어 보세요.
+    </p>
+    {% endif %}
+  </section>
+
+  <!-- 2. 순위 모니터링 기록 요약 -->
+  <section>
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-lg font-semibold text-slate-900">
+        순위 모니터링 기록
+      </h2>
+      <a
+        href="/monitoring"
+        class="text-xs text-sky-600 hover:text-sky-700 hover:underline"
+      >
+        자세히 보기 →
+      </a>
+    </div>
+
+    {% if logs and logs|length > 0 %}
+    <div class="overflow-x-auto bg-white rounded-xl border border-slate-200 shadow-sm">
+      <table class="min-w-full text-sm">
+        <thead class="bg-slate-50">
+          <tr>
+            <th class="px-3 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+              체크일
+            </th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+              키워드
+            </th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+              블로그 URL
+            </th>
+            <th class="px-3 py-2 text-center text-xs font-medium text-slate-500 uppercase tracking-wider">
+              웹 검색
+            </th>
+            <th class="px-3 py-2 text-center text-xs font-medium text-slate-500 uppercase tracking-wider">
+              블로그 검색
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          {% for log in logs %}
+          <tr class="hover:bg-slate-50">
+            <td class="px-3 py-2 whitespace-nowrap text-xs text-slate-500">
+              {{ log.last_checked_at }}
+            </td>
+            <td class="px-3 py-2 whitespace-nowrap text-slate-800">
+              {{ log.keyword }}
+            </td>
+            <td class="px-3 py-2 text-slate-700">
+              <a
+                href="{{ log.blog_url }}"
+                target="_blank"
+                class="text-sky-600 hover:underline break-all"
+              >
+                {{ log.blog_url }}
+              </a>
+            </td>
+            <td class="px-3 py-2 text-center">
+              {% if log.web_rank %}
+                <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+                  {{ log.web_rank }}위
+                </span>
+              {% else %}
+                <span class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-0.5 text-xs font-medium text-slate-500">
+                  10위 밖
+                </span>
+              {% endif %}
+            </td>
+            <td class="px-3 py-2 text-center">
+              {% if log.blog_rank %}
+                <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+                  {{ log.blog_rank }}위
+                </span>
+              {% else %}
+                <span class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-0.5 text-xs font-medium text-slate-500">
+                  10위 밖
+                </span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="text-sm text-slate-500">
+      아직 저장된 순위 모니터링 기록이 없습니다.
+      <a href="/monitoring" class="text-sky-600 hover:underline">순위 모니터링 페이지</a>에서 첫 체크를 진행해 보세요.
+    </p>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

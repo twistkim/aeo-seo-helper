@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- 제목 -->
+  <div class="mb-8">
+    <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">
+      네이버 검색 순위 모니터링
+    </h1>
+    <p class="mt-2 text-sm text-slate-500">
+      키워드와 블로그 글 URL을 입력하면, 네이버
+      <span class="font-semibold">웹 검색</span> /
+      <span class="font-semibold">블로그 검색</span>
+      상위 10위 안에 노출되는지 확인하고 기록합니다.
+    </p>
+  </div>
+
+  <!-- 상단: 폼 + 결과 -->
+  <div class="grid gap-6 lg:grid-cols-2">
+    <!-- 입력 폼 카드 -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <h2 class="text-lg font-semibold text-slate-900 mb-4">
+        키워드 · 블로그 URL 입력
+      </h2>
+
+      {% if error %}
+      <div class="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        {{ error }}
+      </div>
+      {% endif %}
+
+      <form method="post" action="/monitoring" class="space-y-4">
+        <!-- 키워드 -->
+        <div>
+          <label for="keyword" class="block text-sm font-medium text-slate-700 mb-1">
+            검색 키워드
+          </label>
+          <input
+            type="text"
+            id="keyword"
+            name="keyword"
+            required
+            value="{{ form.keyword }}"
+            placeholder="예: 리프팅 앰플 후기, 민감성 피부 진정 케어"
+            class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+          />
+          <p class="mt-1 text-xs text-slate-400">
+            실제 네이버에서 검색할 때 사용하는 문구 그대로 입력해 주세요.
+          </p>
+        </div>
+
+        <!-- 블로그 URL -->
+        <div>
+          <label for="blog_url" class="block text-sm font-medium text-slate-700 mb-1">
+            블로그 글 URL
+          </label>
+          <input
+            type="url"
+            id="blog_url"
+            name="blog_url"
+            required
+            value="{{ form.blog_url }}"
+            placeholder="예: https://blog.naver.com/yourblog/224060246982"
+            class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+          />
+          <p class="mt-1 text-xs text-slate-400">
+            네이버 블로그 글 상세 주소를 복사해서 붙여넣어 주세요.
+          </p>
+        </div>
+
+        <button
+          type="submit"
+          class="inline-flex items-center justify-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-1"
+        >
+          순위 확인하기
+        </button>
+      </form>
+    </div>
+
+    <!-- 결과 카드 -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <h2 class="text-lg font-semibold text-slate-900 mb-4">
+        이번 조회 결과
+      </h2>
+
+      {% if result %}
+      <div class="space-y-3 text-sm text-slate-700">
+        <div>
+          <div class="text-xs font-medium text-slate-500 uppercase mb-1">
+            키워드
+          </div>
+          <div class="font-medium">
+            {{ result.keyword }}
+          </div>
+        </div>
+
+        <div>
+          <div class="text-xs font-medium text-slate-500 uppercase mb-1">
+            블로그 URL
+          </div>
+          <a
+            href="{{ result.blog_url }}"
+            target="_blank"
+            class="text-sky-600 hover:underline break-all"
+          >
+            {{ result.blog_url }}
+          </a>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mt-4">
+          <!-- 웹 검색 -->
+          <div class="border border-slate-200 rounded-lg p-3">
+            <div class="text-xs font-medium text-slate-500 mb-1">
+              네이버 웹 검색
+            </div>
+            {% if result.web_rank %}
+              <div class="text-xl font-bold text-slate-900">
+                {{ result.web_rank }}위
+              </div>
+              <p class="mt-1 text-xs text-slate-500">
+                상위 10위 안에 노출 중입니다.
+              </p>
+            {% else %}
+              <div class="text-xl font-bold text-slate-900">
+                10위 밖
+              </div>
+              <p class="mt-1 text-xs text-slate-500">
+                현재 기준 상위 10위 안에는 노출되지 않습니다.
+              </p>
+            {% endif %}
+          </div>
+
+          <!-- 블로그 검색 -->
+          <div class="border border-slate-200 rounded-lg p-3">
+            <div class="text-xs font-medium text-slate-500 mb-1">
+              네이버 블로그 검색
+            </div>
+            {% if result.blog_rank %}
+              <div class="text-xl font-bold text-slate-900">
+                {{ result.blog_rank }}위
+              </div>
+              <p class="mt-1 text-xs text-slate-500">
+                상위 10위 안에 노출 중입니다.
+              </p>
+            {% else %}
+              <div class="text-xl font-bold text-slate-900">
+                10위 밖
+              </div>
+              <p class="mt-1 text-xs text-slate-500">
+                현재 기준 상위 10위 안에는 노출되지 않습니다.
+              </p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      {% elif error %}
+      <p class="text-sm text-slate-500">
+        상단 폼에서 다시 입력 후 조회해 주세요.
+      </p>
+      {% else %}
+      <p class="text-sm text-slate-500">
+        왼쪽에 키워드와 블로그 URL을 입력한 뒤
+        <span class="font-medium">“순위 확인하기”</span>를 누르면
+        여기에서 이번 조회 결과를 볼 수 있습니다.
+      </p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- 하단: 최근 모니터링 기록 -->
+  <div class="mt-10">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-lg font-semibold text-slate-900">
+        최근 모니터링 기록
+      </h2>
+      <p class="text-xs text-slate-400">
+        최근 50개까지 표시됩니다.
+      </p>
+    </div>
+
+    {% if logs and logs|length > 0 %}
+    <div class="overflow-x-auto bg-white rounded-xl border border-slate-200 shadow-sm">
+      <table class="min-w-full text-sm">
+        <thead class="bg-slate-50">
+          <tr>
+            <th class="px-3 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+              날짜
+            </th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+              키워드
+            </th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+              블로그 URL
+            </th>
+            <th class="px-3 py-2 text-center text-xs font-medium text-slate-500 uppercase tracking-wider">
+              웹 검색
+            </th>
+            <th class="px-3 py-2 text-center text-xs font-medium text-slate-500 uppercase tracking-wider">
+              블로그 검색
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          {% for log in logs %}
+          <tr class="hover:bg-slate-50">
+            <td class="px-3 py-2 whitespace-nowrap text-xs text-slate-500">
+              {{ log.last_checked_at }}
+            </td>
+            <td class="px-3 py-2 whitespace-nowrap text-slate-800">
+              {{ log.keyword }}
+            </td>
+            <td class="px-3 py-2 text-slate-700">
+              <a
+                href="{{ log.blog_url }}"
+                target="_blank"
+                class="text-sky-600 hover:underline break-all"
+              >
+                {{ log.blog_url }}
+              </a>
+            </td>
+            <td class="px-3 py-2 text-center">
+              {% if log.web_rank %}
+                <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+                  {{ log.web_rank }}위
+                </span>
+              {% else %}
+                <span class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-0.5 text-xs font-medium text-slate-500">
+                  10위 밖
+                </span>
+              {% endif %}
+            </td>
+            <td class="px-3 py-2 text-center">
+              {% if log.blog_rank %}
+                <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+                  {{ log.blog_rank }}위
+                </span>
+              {% else %}
+                <span class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-0.5 text-xs font-medium text-slate-500">
+                  10위 밖
+                </span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="text-sm text-slate-500">
+      아직 저장된 모니터링 기록이 없습니다. 위에서 첫 순위 체크를 진행해 보세요.
+    </p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

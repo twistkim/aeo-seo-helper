@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="max-w-md mx-auto">
+  <div class="mb-8 text-center">
+    <h1 class="text-2xl font-bold text-slate-900">로그인</h1>
+    <p class="mt-2 text-sm text-slate-500">
+      AEO SEO Helper에 로그인하고 블로그 SEO 작업을 시작하세요.
+    </p>
+  </div>
+
+  <!-- 회원가입 성공 메시지 -->
+  {% if message %}
+  <div class="mb-4 rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-800">
+    {{ message }}
+  </div>
+  {% endif %}
+
+  <!-- 에러 메시지 -->
+  {% if error %}
+  <div class="mb-4 rounded-lg bg-rose-50 border border-rose-200 px-4 py-3 text-sm text-rose-800">
+    {{ error }}
+  </div>
+  {% endif %}
+
+  <form method="post" action="/login" class="space-y-4 bg-white border border-slate-200 rounded-xl px-5 py-6 shadow-sm">
+    <div class="space-y-1">
+      <label for="email" class="block text-sm font-medium text-slate-700">
+        이메일
+      </label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        required
+        class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+        placeholder="you@example.com"
+      />
+    </div>
+
+    <div class="space-y-1">
+      <label for="password" class="block text-sm font-medium text-slate-700">
+        비밀번호
+      </label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        required
+        class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+        placeholder="비밀번호를 입력하세요"
+      />
+    </div>
+
+    <button
+      type="submit"
+      class="w-full inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1"
+    >
+      로그인
+    </button>
+
+    <p class="text-xs text-slate-500 text-center">
+      아직 계정이 없으신가요?
+      <a href="/signup" class="text-indigo-600 hover:underline font-medium">
+        회원가입하기
+      </a>
+    </p>
+  </form>
+</section>
+{% endblock %}

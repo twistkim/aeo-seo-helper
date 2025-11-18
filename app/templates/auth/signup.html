@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="max-w-md mx-auto">
+  <div class="mb-8 text-center">
+    <h1 class="text-2xl font-bold text-slate-900">회원가입</h1>
+    <p class="mt-2 text-sm text-slate-500">
+      AEO SEO Helper 계정을 생성하고, 블로그 자동 생성 · 개선 · 순위 모니터링을 한 곳에서 관리하세요.
+    </p>
+  </div>
+
+  <!-- 에러 메시지 -->
+  {% if error %}
+  <div class="mb-4 rounded-lg bg-rose-50 border border-rose-200 px-4 py-3 text-sm text-rose-800">
+    {{ error }}
+  </div>
+  {% endif %}
+
+  <form method="post" action="/signup" class="space-y-4 bg-white border border-slate-200 rounded-xl px-5 py-6 shadow-sm">
+    <div class="space-y-1">
+      <label for="email" class="block text-sm font-medium text-slate-700">
+        이메일
+      </label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        required
+        class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+        placeholder="you@example.com"
+      />
+    </div>
+
+    <div class="space-y-1">
+      <label for="full_name" class="block text-sm font-medium text-slate-700">
+        이름 (선택)
+      </label>
+      <input
+        type="text"
+        id="full_name"
+        name="full_name"
+        class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+        placeholder="홍길동"
+      />
+    </div>
+
+    <div class="space-y-1">
+      <label for="password" class="block text-sm font-medium text-slate-700">
+        비밀번호
+      </label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        required
+        class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+        placeholder="영문, 숫자, 기호 조합 권장"
+      />
+    </div>
+
+    <button
+      type="submit"
+      class="w-full inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1"
+    >
+      회원가입
+    </button>
+
+    <p class="text-xs text-slate-500 text-center">
+      이미 계정이 있으신가요?
+      <a href="/login" class="text-indigo-600 hover:underline font-medium">
+        로그인하기
+      </a>
+    </p>
+  </form>
+</section>
+{% endblock %}

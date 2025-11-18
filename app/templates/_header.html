@@ -1,0 +1,44 @@
+<header class="bg-white border-b border-slate-200">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+    <!-- 왼쪽 로고 -->
+    <div class="flex items-center space-x-2">
+      <a href="/generator" class="text-base sm:text-lg font-bold text-slate-900">
+        AEO SEO Helper
+      </a>
+    </div>
+
+    <!-- 오른쪽 메뉴 -->
+    <nav class="flex items-center space-x-4 text-sm">
+      <!-- 로그인한 상태에서만 보여줄 메뉴 -->
+      {% if user %}
+        <a href="/generator" class="text-slate-600 hover:text-sky-600">
+          원고 생성
+        </a>
+        <a href="/improvement" class="text-slate-600 hover:text-sky-600">
+          블로그 분석
+        </a>
+        <!-- 나중에 /monitoring, /mypage 생기면 여기 추가 -->
+        <a href="/monitoring" class="text-slate-600 hover:text-sky-600">순위 모니터링</a>
+        <a href="/mypage" class="text-slate-600 hover:text-sky-600">마이페이지</a>
+
+        <a
+          href="/logout"
+          class="inline-flex items-center px-3 py-1.5 rounded-lg bg-slate-900 text-white hover:bg-slate-800"
+        >
+          로그아웃
+        </a>
+      {% else %}
+        <!-- 비로그인 상태 메뉴 -->
+        <a href="/login" class="text-slate-600 hover:text-sky-600">
+          로그인
+        </a>
+        <a
+          href="/signup"
+          class="inline-flex items-center px-3 py-1.5 rounded-lg bg-sky-600 text-white hover:bg-sky-700"
+        >
+          회원가입
+        </a>
+      {% endif %}
+    </nav>
+  </div>
+</header>
