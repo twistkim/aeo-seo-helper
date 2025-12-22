@@ -29,7 +29,7 @@ class UserRead(UserBase):
     created_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 # ======================
@@ -66,7 +66,7 @@ class ArticleRead(ArticleBase):
     created_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 # ======================
@@ -93,7 +93,33 @@ class MonitoredKeywordRead(MonitoredKeywordBase):
     created_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
+
+
+# ======================
+# Improvement(블로그 분석 요청) 스키마
+# ======================
+class ImprovementRequestBase(BaseModel):
+    company_name: Optional[str] = None
+    contact_name: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[EmailStr] = None
+    blog_url: str
+    core_keyword: str
+    analysis_md: Optional[str] = None
+
+
+class ImprovementRequestCreate(ImprovementRequestBase):
+    pass
+
+
+class ImprovementRequestRead(ImprovementRequestBase):
+    id: int
+    user_id: Optional[int] = None
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
 
 
 # ======================
@@ -103,3 +129,4 @@ class MyPageData(BaseModel):
     user: UserRead
     articles: List[ArticleRead]
     monitored_keywords: List[MonitoredKeywordRead]
+    improvement_requests: List[ImprovementRequestRead] = []

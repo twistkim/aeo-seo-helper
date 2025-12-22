@@ -14,6 +14,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import Column, Integer, BigInteger, String, Text, DateTime, Boolean, ForeignKey, func
 
 from .database import init_db, get_db
 from . import schemas, crud, models
@@ -42,6 +43,9 @@ async def on_startup() -> None:
     await init_db()
 
 
+# ==========================
+# 쿠키에서 현재 로그인 유저 가져오기 (웹용)
+# ==========================
 # ==========================
 # 쿠키에서 현재 로그인 유저 가져오기 (웹용)
 # ==========================
@@ -110,14 +114,47 @@ async def get_current_user_from_cookie(
     return user
 
 # ==========================
+# 쿠키에서 현재 로그인 유저 가져오기 (옵션: 비로그인 허용)
+# ==========================
+async def get_optional_user_from_cookie(
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+) -> Optional[models.User]:
+    """access_token 쿠키가 있으면 유저를 반환하고, 없거나 유효하지 않으면 None."""
+    token_cookie = request.cookies.get("access_token")
+    if not token_cookie:
+        return None
+
+    if token_cookie.startswith("Bearer "):
+        token = token_cookie[len("Bearer ") :]
+    else:
+        token = token_cookie
+
+    payload = decode_access_token(token)
+    if payload is None:
+        return None
+
+    user_id_str = payload.get("sub")
+    if not user_id_str:
+        return None
+
+    try:
+        user_id = int(user_id_str)
+    except ValueError:
+        return None
+
+    user = await crud.get_user(db, user_id=user_id)
+    return user
+
+# ==========================
 # 기본 라우트
 # ==========================
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
     """
-    루트 접근 시 /login 으로 리다이렉트
+    루트 접근 시 /improvement 로 리다이렉트
     """
-    return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
+    return RedirectResponse(url="/improvement", status_code=status.HTTP_302_FOUND)
 
 
 # ==========================
@@ -465,7 +502,7 @@ async def generate_post(
 @app.get("/improvement", response_class=HTMLResponse)
 async def improvement_page(
     request: Request,
-    current_user: models.User = Depends(get_current_user_from_cookie),
+    current_user: Optional[models.User] = Depends(get_optional_user_from_cookie),
 ):
     return templates.TemplateResponse(
         "improvement.html",
@@ -481,7 +518,12 @@ async def improvement_action(
     request: Request,
     blog_url: str = Form(...),
     core_keyword: str = Form(...),
-    current_user: models.User = Depends(get_current_user_from_cookie),
+    company_name: Optional[str] = Form(None),
+    contact_name: Optional[str] = Form(None),
+    phone: Optional[str] = Form(None),
+    email: Optional[str] = Form(None),
+    db: AsyncSession = Depends(get_db),
+    current_user: Optional[models.User] = Depends(get_optional_user_from_cookie),
 ):
     try:
         # 1) URL에서 본문 크롤링
@@ -494,10 +536,32 @@ async def improvement_action(
             blog_url=blog_url,
         )
 
+        # 3) DB 저장 (비로그인도 저장 가능)
+        try:
+            req_in = schemas.ImprovementRequestCreate(
+                company_name=company_name,
+                contact_name=contact_name,
+                phone=phone,
+                email=email,
+                blog_url=blog_url,
+                core_keyword=core_keyword,
+                analysis_md=analysis_md,
+            )
+            saved = await crud.create_improvement_request(
+                db,
+                user_id=(current_user.id if current_user else None),
+                req_in=req_in,
+            )
+            saved_id = saved.id
+        except Exception:
+            # 저장 실패해도 분석 결과는 반환
+            saved_id = None
+
         return JSONResponse(
             {
                 "success": True,
                 "analysis": analysis_md,
+                "request_id": saved_id,
             }
         )
     except Exception as e:
@@ -636,6 +700,13 @@ async def mypage(
         limit=50,
     )
 
+    # 내가 요청한 블로그 개선(분석) 기록
+    improvement_requests = await crud.list_user_improvement_requests(
+        db,
+        user_id=current_user.id,
+        limit=50,
+    )
+
     return templates.TemplateResponse(
         "mypage.html",
         {
@@ -643,5 +714,6 @@ async def mypage(
             "user": current_user,
             "articles": articles,
             "logs": logs,
+            "improvement_requests": improvement_requests,
         },
     )

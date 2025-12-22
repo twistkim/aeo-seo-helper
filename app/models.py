@@ -7,6 +7,7 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Integer,
+    BigInteger,
     String,
     Text,
 )
@@ -33,6 +34,11 @@ class User(Base):
     )
     monitored_keywords = relationship(
         "MonitoredKeyword",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    improvement_requests = relationship(
+        "ImprovementRequest",
         back_populates="user",
         cascade="all, delete-orphan",
     )
@@ -96,3 +102,35 @@ class MonitoredKeyword(Base):
 
     # 관계
     user = relationship("User", back_populates="monitored_keywords")
+
+
+class ImprovementRequest(Base):
+    """네이버 블로그 분석/개선안 요청 저장 테이블
+
+    비로그인 사용자도 저장 가능하도록 user_id 는 nullable.
+    """
+
+    __tablename__ = "improvement_requests"
+
+    id = Column(BigInteger, primary_key=True, index=True, autoincrement=True)
+
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+
+    company_name = Column(String(255), nullable=True)
+    contact_name = Column(String(255), nullable=True)
+    phone = Column(String(50), nullable=True)
+    email = Column(String(255), nullable=True)
+
+    blog_url = Column(Text, nullable=False)
+    core_keyword = Column(String(255), nullable=False, index=True)
+
+    analysis_md = Column(Text, nullable=True)
+
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    user = relationship("User", back_populates="improvement_requests")

@@ -181,5 +181,93 @@
     </p>
     {% endif %}
   </section>
+
+  <!-- 3. 블로그 분석/개선안 요청 기록 -->
+  <section class="mt-10">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-lg font-semibold text-slate-900">
+        블로그 분석/개선안 요청 기록
+      </h2>
+      <a
+        href="/improvement"
+        class="text-xs text-sky-600 hover:text-sky-700 hover:underline"
+      >
+        새 분석 요청하기 →
+      </a>
+    </div>
+
+    {% if improvement_requests and improvement_requests|length > 0 %}
+    <div class="overflow-x-auto bg-white rounded-xl border border-slate-200 shadow-sm">
+      <table class="min-w-full text-sm">
+        <thead class="bg-slate-50">
+          <tr>
+            <th class="px-3 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+              요청일
+            </th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+              회사/담당자
+            </th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+              연락처/이메일
+            </th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+              핵심 키워드
+            </th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+              블로그 URL
+            </th>
+            <th class="px-3 py-2 text-center text-xs font-medium text-slate-500 uppercase tracking-wider">
+              결과 보기
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          {% for req in improvement_requests %}
+          <tr class="hover:bg-slate-50 align-top">
+            <td class="px-3 py-2 whitespace-nowrap text-xs text-slate-500">
+              {{ req.created_at }}
+            </td>
+            <td class="px-3 py-2 text-slate-800">
+              <div class="font-medium">{{ req.company_name or "-" }}</div>
+              <div class="text-xs text-slate-500">{{ req.contact_name or "-" }}</div>
+            </td>
+            <td class="px-3 py-2 text-slate-700">
+              <div class="text-xs">{{ req.phone or "-" }}</div>
+              <div class="text-xs">{{ req.email or "-" }}</div>
+            </td>
+            <td class="px-3 py-2 whitespace-nowrap text-slate-800">
+              {{ req.core_keyword }}
+            </td>
+            <td class="px-3 py-2 text-slate-700">
+              <a
+                href="{{ req.blog_url }}"
+                target="_blank"
+                class="text-sky-600 hover:underline break-all"
+              >
+                {{ req.blog_url }}
+              </a>
+            </td>
+            <td class="px-3 py-2 text-center">
+              <details class="inline-block text-left max-w-xs sm:max-w-md">
+                <summary class="cursor-pointer text-xs text-sky-600 hover:text-sky-700">
+                  분석 결과
+                </summary>
+                <div class="mt-2 max-h-64 overflow-y-auto border border-slate-200 rounded-md bg-slate-50 p-2 text-xs text-slate-700 whitespace-pre-wrap">
+                  {{ req.analysis_md or "(저장된 결과가 없습니다)" }}
+                </div>
+              </details>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="text-sm text-slate-500">
+      아직 저장된 블로그 분석/개선안 요청 기록이 없습니다.
+      <a href="/improvement" class="text-sky-600 hover:underline">분석 페이지</a>에서 첫 요청을 진행해 보세요.
+    </p>
+    {% endif %}
+  </section>
 </div>
 {% endblock %}

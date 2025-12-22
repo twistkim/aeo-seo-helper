@@ -171,3 +171,50 @@ async def list_user_monitored_keywords(
         .limit(limit)
     )
     return result.scalars().all()
+
+
+# ==========================
+# Improvement (블로그 분석 요청) 관련 CRUD
+# ==========================
+async def create_improvement_request(
+    db: AsyncSession,
+    user_id: Optional[int],
+    req_in: schemas.ImprovementRequestCreate,
+) -> models.ImprovementRequest:
+    """
+    네이버 블로그 분석 요청 1건 저장
+    (비로그인 사용자도 user_id=None 으로 저장 가능)
+    """
+    record = models.ImprovementRequest(
+        user_id=user_id,
+        company_name=req_in.company_name,
+        contact_name=req_in.contact_name,
+        phone=req_in.phone,
+        email=req_in.email,
+        blog_url=req_in.blog_url,
+        core_keyword=req_in.core_keyword,
+        analysis_md=req_in.analysis_md,
+    )
+
+    db.add(record)
+    await db.commit()
+    await db.refresh(record)
+
+    return record
+
+
+async def list_user_improvement_requests(
+    db: AsyncSession,
+    user_id: int,
+    limit: int = 50,
+) -> List[models.ImprovementRequest]:
+    """
+    특정 유저의 블로그 분석 요청 목록 조회 (최신순)
+    """
+    result = await db.execute(
+        select(models.ImprovementRequest)
+        .where(models.ImprovementRequest.user_id == user_id)
+        .order_by(models.ImprovementRequest.created_at.desc())
+        .limit(limit)
+    )
+    return result.scalars().all()
