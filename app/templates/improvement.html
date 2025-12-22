@@ -113,9 +113,10 @@
     <div>
       <div class="bg-slate-900 rounded-xl shadow-inner p-4 sm:p-5 h-full flex flex-col">
         <div class="flex items-center justify-between mb-3">
-          <h2 class="text-sm font-semibold text-slate-100">
-            분석 결과 (Markdown)
-          </h2>
+          <div>
+            <h2 class="text-sm font-semibold text-slate-100">분석 결과</h2>
+            <p class="text-[11px] text-slate-400 mt-0.5">JSON 기반 UI(점수/우선순위/체크리스트)로 표시됩니다. 필요 시 원문도 함께 제공합니다.</p>
+          </div>
           <span
             id="improvement-status"
             class="text-xs text-slate-400"
@@ -124,10 +125,16 @@
           </span>
         </div>
 
-        <div
-          id="improvement-result"
-          class="flex-1 rounded-lg bg-slate-950/70 border border-slate-800 p-3 text-xs sm:text-sm font-mono text-slate-100 overflow-auto whitespace-pre-wrap"
-        ></div>
+        <div class="flex-1 rounded-lg bg-slate-950/70 border border-slate-800 p-3 overflow-auto">
+          <!-- Structured (JSON) UI -->
+          <div id="improvement-result-ui" class="hidden space-y-4"></div>
+
+          <!-- Raw fallback text (Markdown/Plain) -->
+          <pre
+            id="improvement-result-raw"
+            class="hidden text-xs sm:text-sm font-mono text-slate-100 whitespace-pre-wrap"
+          ></pre>
+        </div>
       </div>
     </div>
   </div>
@@ -136,9 +143,209 @@
 <script>
   const form = document.getElementById("improvement-form");
   const submitBtn = document.getElementById("improvement-submit");
-  const resultEl = document.getElementById("improvement-result");
+  const resultUIEl = document.getElementById("improvement-result-ui");
+  const resultRawEl = document.getElementById("improvement-result-raw");
   const statusEl = document.getElementById("improvement-status");
   const errorEl = document.getElementById("improvement-error");
+
+  function escapeHtml(str) {
+    return String(str || "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function badge(sev) {
+    const s = (sev || "").toLowerCase();
+    if (s === "high") return "bg-rose-600/15 text-rose-300 border-rose-600/30";
+    if (s === "medium") return "bg-amber-600/15 text-amber-300 border-amber-600/30";
+    return "bg-emerald-600/15 text-emerald-300 border-emerald-600/30";
+  }
+
+  function scoreBar(score) {
+    const v = Math.max(0, Math.min(100, Number(score || 0)));
+    return `
+      <div class="mt-2 h-2 rounded bg-slate-800 overflow-hidden">
+        <div class="h-2 rounded bg-sky-500" style="width:${v}%"></div>
+      </div>
+    `;
+  }
+
+  function renderAnalysisUI(j) {
+    // Summary + scores
+    const summary = escapeHtml(j.summary || "");
+    const scores = j.scores || {};
+
+    const scoreCards = [
+      { key: "seo", label: "SEO" },
+      { key: "readability", label: "가독성" },
+      { key: "structure", label: "구조" },
+      { key: "keyword", label: "키워드" },
+    ].map(({ key, label }) => {
+      const v = Number(scores?.[key] ?? 0);
+      return `
+        <div class="rounded-lg border border-slate-800 bg-slate-950/40 p-3">
+          <div class="flex items-center justify-between">
+            <div class="text-xs text-slate-300">${label}</div>
+            <div class="text-sm font-semibold text-slate-100">${isFinite(v) ? v : 0}</div>
+          </div>
+          ${scoreBar(v)}
+        </div>
+      `;
+    }).join("");
+
+    // Issues (priority)
+    const issues = Array.isArray(j.issues) ? j.issues : [];
+    const issuesHtml = issues.length
+      ? issues
+          .slice(0, 20)
+          .map((it, idx) => {
+            const sev = (it.severity || "low").toLowerCase();
+            return `
+              <div class="rounded-lg border border-slate-800 bg-slate-950/40 p-3 space-y-2">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="min-w-0">
+                    <div class="text-sm font-semibold text-slate-100">${idx + 1}. ${escapeHtml(it.title || "이슈")}</div>
+                    ${it.evidence ? `<div class="text-xs text-slate-400 mt-1">근거: ${escapeHtml(it.evidence)}</div>` : ""}
+                  </div>
+                  <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full border text-[11px] ${badge(sev)}">${sev.toUpperCase()}</span>
+                </div>
+                ${it.impact ? `<div class="text-xs text-slate-200"><span class="text-slate-400">영향</span> · ${escapeHtml(it.impact)}</div>` : ""}
+                ${it.fix ? `<div class="text-xs text-slate-200"><span class="text-slate-400">개선</span> · ${escapeHtml(it.fix)}</div>` : ""}
+              </div>
+            `;
+          })
+          .join("")
+      : `<div class="text-xs text-slate-400">이슈 목록이 비어 있습니다.</div>`;
+
+    // Plan / outline / FAQ / Videos / Checklist
+    const plan = Array.isArray(j.rewrite_plan) ? j.rewrite_plan : [];
+    const outline = Array.isArray(j.suggested_outline) ? j.suggested_outline : [];
+    const faq = Array.isArray(j.faq) ? j.faq : [];
+    const videos = Array.isArray(j.video_slots) ? j.video_slots : [];
+    const checklist = Array.isArray(j.final_checklist) ? j.final_checklist : [];
+
+    const listHtml = (arr) =>
+      arr.length
+        ? `<ul class="list-disc pl-5 space-y-1 text-xs text-slate-200">${arr
+            .slice(0, 20)
+            .map((x) => `<li>${escapeHtml(x)}</li>`)
+            .join("")}</ul>`
+        : `<div class="text-xs text-slate-400">항목이 없습니다.</div>`;
+
+    const faqHtml = faq.length
+      ? `<div class="space-y-2">${faq
+          .slice(0, 10)
+          .map((x) => {
+            const q = escapeHtml(x.q || "");
+            const a = escapeHtml(x.a || "");
+            return `
+              <div class="rounded-lg border border-slate-800 bg-slate-950/40 p-3">
+                <div class="text-xs text-slate-300"><span class="font-semibold text-slate-100">Q.</span> ${q}</div>
+                <div class="text-xs text-slate-200 mt-2"><span class="font-semibold text-slate-100">A.</span> ${a}</div>
+              </div>
+            `;
+          })
+          .join("")}</div>`
+      : `<div class="text-xs text-slate-400">FAQ가 없습니다.</div>`;
+
+    const videosHtml = videos.length
+      ? `<ul class="space-y-2">${videos
+          .slice(0, 10)
+          .map((x) => `
+            <li class="rounded-lg border border-slate-800 bg-slate-950/40 p-3 text-xs text-slate-200">
+              <span class="text-slate-400">영상 추천</span> · ${escapeHtml(x)}
+            </li>
+          `)
+          .join("")}</ul>`
+      : `<div class="text-xs text-slate-400">영상 슬롯 제안이 없습니다.</div>`;
+
+    const checklistHtml = checklist.length
+      ? `<div class="grid gap-2">${checklist
+          .slice(0, 30)
+          .map((x, i) => `
+            <label class="flex items-start gap-2 rounded-lg border border-slate-800 bg-slate-950/40 p-3">
+              <input type="checkbox" class="mt-0.5" />
+              <span class="text-xs text-slate-200">${escapeHtml(x)}</span>
+            </label>
+          `)
+          .join("")}</div>`
+      : `<div class="text-xs text-slate-400">체크리스트가 없습니다.</div>`;
+
+    // Metrics small chips
+    const m = j.metrics || {};
+    const chips = [
+      ["문단수(추정)", m.estimated_paragraphs],
+      ["단어수(추정)", m.estimated_words],
+      ["서론 키워드", m.intro_has_keyword],
+      ["서론 제품/브랜딩", m.intro_has_brand_or_product],
+      ["FAQ", m.faq_count],
+      ["VIDEO", m.video_slot_count],
+    ]
+      .filter(([_, v]) => v !== undefined && v !== null)
+      .map(([k, v]) => {
+        const val = typeof v === "boolean" ? (v ? "OK" : "NO") : String(v);
+        const ok = v === true || (typeof v === "number" && v > 0);
+        const cls = ok ? "border-emerald-600/30 bg-emerald-600/10 text-emerald-200" : "border-slate-700 bg-slate-900/40 text-slate-200";
+        return `<span class="inline-flex items-center gap-1 px-2 py-1 rounded-full border text-[11px] ${cls}"><span class="text-slate-400">${escapeHtml(k)}</span>${escapeHtml(val)}</span>`;
+      })
+      .join(" ");
+
+    resultUIEl.innerHTML = `
+      <div class="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <div class="text-xs text-slate-400">요약</div>
+            <div class="text-sm font-semibold text-slate-100 mt-1">${summary || "요약이 없습니다."}</div>
+          </div>
+        </div>
+        <div class="mt-3 flex flex-wrap gap-2">${chips || ""}</div>
+        <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">${scoreCards}</div>
+      </div>
+
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-sm font-semibold text-slate-100">우선순위 이슈</h3>
+          <span class="text-[11px] text-slate-400">HIGH → MEDIUM → LOW</span>
+        </div>
+        <div class="space-y-3">${issuesHtml}</div>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-2">
+        <div class="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
+          <h3 class="text-sm font-semibold text-slate-100">개선 적용 순서</h3>
+          <div class="mt-2">${listHtml(plan)}</div>
+        </div>
+        <div class="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
+          <h3 class="text-sm font-semibold text-slate-100">추천 구조(목차)</h3>
+          <div class="mt-2">${listHtml(outline)}</div>
+        </div>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-2">
+        <div class="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
+          <h3 class="text-sm font-semibold text-slate-100">FAQ 제안</h3>
+          <div class="mt-2">${faqHtml}</div>
+        </div>
+        <div class="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
+          <h3 class="text-sm font-semibold text-slate-100">VIDEO 슬롯 제안</h3>
+          <div class="mt-2">${videosHtml}</div>
+        </div>
+      </div>
+
+      <div class="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
+        <h3 class="text-sm font-semibold text-slate-100">최종 체크리스트</h3>
+        <div class="mt-2">${checklistHtml}</div>
+      </div>
+
+      <details class="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
+        <summary class="cursor-pointer text-sm font-semibold text-slate-100">원문 결과 보기(폴백)</summary>
+        <p class="mt-2 text-xs text-slate-400">아래는 모델 원문 출력입니다. JSON 파싱/디버깅용으로 보관합니다.</p>
+      </details>
+    `;
+  }
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -150,7 +357,10 @@
     submitBtn.disabled = true;
     submitBtn.textContent = "분석 중...";
     statusEl.textContent = "Gemini가 블로그를 분석하는 중입니다...";
-    resultEl.textContent = "";
+    resultUIEl.innerHTML = "";
+    resultUIEl.classList.add("hidden");
+    resultRawEl.textContent = "";
+    resultRawEl.classList.add("hidden");
 
     try {
       const res = await fetch("/improvement", {
@@ -164,9 +374,26 @@
         throw new Error(data.error || "분석 중 알 수 없는 오류가 발생했습니다.");
       }
 
-      // 서버에서 받은 마크다운 텍스트를 그대로 표시 (whitespace-pre-wrap + mono)
-      resultEl.textContent = data.analysis || "";
-      statusEl.textContent = "분석 완료. 아래 내용을 확인하세요.";
+      const analysisJson = data.analysis_json;
+      const analysisRaw = data.analysis || "";
+
+      if (analysisJson && typeof analysisJson === "object") {
+        renderAnalysisUI(analysisJson);
+        resultUIEl.classList.remove("hidden");
+
+        // 원문도 접을 수 있게 같이 제공
+        if (analysisRaw.trim().length > 0) {
+          resultRawEl.textContent = analysisRaw;
+          resultRawEl.classList.remove("hidden");
+        }
+
+        statusEl.textContent = "분석 완료. 카드 형태로 확인하세요.";
+      } else {
+        // JSON이 없으면 기존처럼 원문만 표시
+        resultRawEl.textContent = analysisRaw;
+        resultRawEl.classList.remove("hidden");
+        statusEl.textContent = "분석 완료. 원문 결과를 확인하세요.";
+      }
     } catch (err) {
       console.error(err);
       errorEl.textContent = err.message || "분석에 실패했습니다.";

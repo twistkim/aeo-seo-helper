@@ -1,6 +1,7 @@
 # app/crud.py
 from typing import Optional, List
 from datetime import datetime
+import json
 
 from sqlalchemy import select, or_
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -165,6 +166,7 @@ async def list_user_monitored_keywords(
 
     MonitoredKeyword.last_checked_at 기준 내림차순으로 정렬한다.
     """
+
     result = await db.execute(
         select(models.MonitoredKeyword)
         .where(models.MonitoredKeyword.user_id == user_id)
@@ -172,6 +174,29 @@ async def list_user_monitored_keywords(
         .limit(limit)
     )
     return result.scalars().all()
+
+
+def _to_json_text(value) -> Optional[str]:
+    """Normalize analysis_json payload to a JSON string for DB storage."""
+    if value is None:
+        return None
+
+    # already a JSON string
+    if isinstance(value, str):
+        return value
+
+    # Pydantic v2 model
+    if hasattr(value, "model_dump"):
+        try:
+            value = value.model_dump()
+        except Exception:
+            pass
+
+    try:
+        return json.dumps(value, ensure_ascii=False)
+    except Exception:
+        # last resort: stringify
+        return json.dumps({"raw": str(value)}, ensure_ascii=False)
 
 
 # ==========================
@@ -195,6 +220,8 @@ async def create_improvement_request(
         blog_url=req_in.blog_url,
         core_keyword=req_in.core_keyword,
         analysis_md=req_in.analysis_md,
+        analysis_json=_to_json_text(getattr(req_in, "analysis_json", None)),
+        analysis_version=getattr(req_in, "analysis_version", None),
     )
 
     db.add(record)

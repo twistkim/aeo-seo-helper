@@ -1,5 +1,6 @@
 # app/main.py
 from typing import Optional
+from pydantic import ValidationError
 
 from fastapi import (
     FastAPI,
@@ -529,30 +530,49 @@ async def improvement_action(
         # 1) URL에서 본문 크롤링
         content = services.scrape_url_content(blog_url)
 
-        # 2) Gemini로 분석/개선안 생성 (마크다운)
-        analysis_md = services.analyze_blog_post(
+        # 2) Gemini로 분석/개선안 생성
+        #    - 신규: JSON 스키마 분석 (서비스 UI용)
+        #    - 폴백: 기존 마크다운/텍스트 그대로 보여주기
+        analysis_json, raw_text = services.analyze_blog_post_json(
             blog_text=content,
             core_keyword=core_keyword,
             blog_url=blog_url,
+            max_retries=1,
         )
 
+        # 화면/DB 폴백용 텍스트: JSON이 성공해도 원문(raw_text)을 같이 저장해두면 디버깅에 유리
+        analysis_md = (raw_text or "").strip()
+
         # 3) DB 저장 (비로그인도 저장 가능)
+        saved_id = None
         try:
-            req_in = schemas.ImprovementRequestCreate(
-                company_name=company_name,
-                contact_name=contact_name,
-                phone=phone,
-                email=email,
-                blog_url=blog_url,
-                core_keyword=core_keyword,
-                analysis_md=analysis_md,
-            )
+            payload = {
+                "company_name": company_name,
+                "contact_name": contact_name,
+                "phone": phone,
+                "email": email,
+                "blog_url": blog_url,
+                "core_keyword": core_keyword,
+                "analysis_md": analysis_md,
+                # 구조화(JSON) 결과 + 버전 (schemas.py에서 ImprovementAnalysis로 검증)
+                "analysis_json": analysis_json,
+                "analysis_version": ("v1" if analysis_json is not None else None),
+            }
+
+            try:
+                req_in = schemas.ImprovementRequestCreate(**payload)
+            except ValidationError as ve:
+                # JSON 분석 결과가 스키마에 맞지 않아도, 분석 텍스트는 저장/반환할 수 있게 폴백
+                payload["analysis_json"] = None
+                payload["analysis_version"] = None
+                req_in = schemas.ImprovementRequestCreate(**payload)
+
             saved = await crud.create_improvement_request(
                 db,
                 user_id=(current_user.id if current_user else None),
                 req_in=req_in,
             )
-            saved_id = saved.id
+            saved_id = getattr(saved, "id", None)
         except Exception:
             # 저장 실패해도 분석 결과는 반환
             saved_id = None
@@ -560,6 +580,9 @@ async def improvement_action(
         return JSONResponse(
             {
                 "success": True,
+                # 서비스 UI에서 우선 사용할 구조화 결과
+                "analysis_json": analysis_json,
+                # JSON이 없거나 디버깅이 필요할 때 표시할 원문(기존처럼)
                 "analysis": analysis_md,
                 "request_id": saved_id,
             }

@@ -12,6 +12,7 @@ from sqlalchemy import (
     Text,
 )
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.mysql import LONGTEXT
 
 from .database import Base
 
@@ -130,6 +131,9 @@ class ImprovementRequest(Base):
     core_keyword = Column(String(255), nullable=False, index=True)
 
     analysis_md = Column(Text, nullable=True)
+    # 구조화(JSON) 분석 결과 저장 (UI 렌더링/버전관리용)
+    analysis_json = Column(LONGTEXT, nullable=True)
+    analysis_version = Column(String(50), nullable=True)
 
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 

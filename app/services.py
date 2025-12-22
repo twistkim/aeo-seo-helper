@@ -1,6 +1,8 @@
 # app/services.py
-from typing import Optional, Any, List, Dict
+from typing import Optional, Any, List, Dict, Tuple
 import os
+import json
+import re
 from urllib.parse import urlparse, parse_qs
 
 import requests
@@ -42,6 +44,52 @@ def _split_csv(text: Optional[str]) -> List[str]:
     if not text:
         return []
     return [x.strip() for x in text.split(",") if x.strip()]
+
+
+def _strip_code_fences(text: str) -> str:
+    """Remove ```json ... ``` fences if model wraps the output."""
+    if not text:
+        return ""
+    # remove triple backtick fenced blocks while keeping inner content
+    text = re.sub(r"^```(?:json)?\s*", "", text.strip(), flags=re.IGNORECASE)
+    text = re.sub(r"```\s*$", "", text.strip())
+    return text.strip()
+
+
+def _extract_json_object(text: str) -> str:
+    """Best-effort: extract the first top-level JSON object from a string."""
+    if not text:
+        return ""
+    s = _strip_code_fences(text)
+
+    # If already looks like JSON object
+    if s.startswith("{") and s.endswith("}"):
+        return s
+
+    # Try to find the first '{' and last '}'
+    start = s.find("{")
+    end = s.rfind("}")
+    if start != -1 and end != -1 and end > start:
+        return s[start : end + 1].strip()
+
+    return ""
+
+
+def _safe_json_loads(text: str) -> Optional[Dict[str, Any]]:
+    """Parse JSON safely; return None if parsing fails."""
+    if not text:
+        return None
+    try:
+        return json.loads(text)
+    except Exception:
+        return None
+
+
+def _gemini_generate_text(prompt: str) -> str:
+    """Call Gemini and return plain text."""
+    model = genai.GenerativeModel(GEMINI_MODEL_NAME)
+    resp = model.generate_content(prompt)
+    return (resp.text or "").strip()
 
 
 # ==========================
@@ -124,7 +172,7 @@ def generate_blog_post(
 
 [기준]
     - 문단수: 180~230개 <p> 문단을 선호한다.
-    - 단어수: 650~700 단어를 목표로 하되, ±10~15% 범위 안에서 변동을 허용한다.
+    - 단어수: 650~700 단어를 목표로 하되, ±10~15%% 범위 안에서 변동을 허용한다.
     - 서론 100자 내:
         · 핵심 키워드(예: "{core_keyword}")가 최소 1회 등장해야 한다.
         · 제품명(예: "{product_name}")이 최소 1회 자연스럽게 등장해야 한다.
@@ -215,9 +263,7 @@ def generate_blog_post(
 
     # ---------- Gemini 호출 ----------
     try:
-        model = genai.GenerativeModel(GEMINI_MODEL_NAME)
-        response = model.generate_content(full_prompt)
-        text = (response.text or "").strip()
+        text = _gemini_generate_text(full_prompt)
 
         # 안전장치: <p> 태그가 하나도 없으면 줄단위로 <p>로 감싸주기
         if "<p" not in text:
@@ -301,8 +347,117 @@ def scrape_url_content(url: str) -> str:
 
 
 # ==========================
-# 3) 블로그 분석 + 개선안 (Gemini, Markdown)
+# 3) 블로그 분석 + 개선안 (Gemini)
+#    - Markdown(기존): analyze_blog_post()
+#    - JSON(신규): analyze_blog_post_json()
 # ==========================
+
+def analyze_blog_post_json(
+    blog_text: str,
+    core_keyword: str,
+    blog_url: str,
+    *,
+    max_retries: int = 1,
+) -> Tuple[Optional[Dict[str, Any]], str]:
+    """Return (analysis_json, raw_text).
+
+    - analysis_json: dict if parsing succeeds, else None
+    - raw_text: original model output (for fallback rendering)
+
+    This is designed for '서비스 UI' 목적: JSON으로 받아서 HTML로 예쁘게 뿌릴 수 있게.
+    """
+
+    json_schema_hint = {
+        "summary": "한 줄 요약",
+        "scores": {"seo": 0, "readability": 0, "structure": 0, "keyword": 0},
+        "issues": [
+            {
+                "severity": "high|medium|low",
+                "title": "문제 제목",
+                "evidence": "근거(원문 일부/패턴)",
+                "impact": "왜 문제인지",
+                "fix": "어떻게 고칠지(구체 지시)",
+            }
+        ],
+        "rewrite_plan": ["1순위 수정", "2순위 수정"],
+        "suggested_outline": ["Hook", "Problem", "Solution", "Benefit", "CTA"],
+        "faq": [{"q": "질문", "a": "답변"}],
+        "video_slots": ["영상 추천 문단 1", "영상 추천 문단 2"],
+        "keyword_distribution": {
+            "core_keyword": {"target": "자연스러운 분산", "notes": "스팸 금지"}
+        },
+        "final_checklist": ["서론 100자 내 키워드 포함", "FAQ 2개 이상"],
+        "metrics": {
+            "estimated_paragraphs": 0,
+            "estimated_words": 0,
+            "intro_has_keyword": True,
+            "intro_has_brand_or_product": True,
+            "faq_count": 0,
+            "video_slot_count": 0,
+        },
+    }
+
+    prompt = f"""
+너는 네이버 블로그 상위노출을 목표로 글을 점검하는 SEO 컨설턴트다.
+아래 [기준]은 상위노출/비상위노출 블로그들을 분석해서 정리한 기준이다.
+반드시 [출력 형식]을 지켜서 **JSON만** 출력하라.
+
+[분석 대상]
+- URL: {blog_url}
+- 핵심 키워드: {core_keyword}
+
+[기준]
+- 문단수: 180~230개 <p> 문단 선호
+- 단어수: 650~700 단어 목표(±10~15%% 허용)
+- 서론 100자 내:
+  · 핵심 키워드 ≥ 1회
+  · 제품명 또는 주요 브랜딩 키워드 ≥ 1회
+- FAQ: 최소 2개 (Q/A 형식)
+- VIDEO 슬롯: 2~3개 (영상으로 설명 보완하는 느낌의 문단)
+- 제품명 등장 총량: 3~10회 (자연스럽게 분산, 스팸 금지)
+- 신제품 전제: "압도적 판매량", "국민템" 등 사회적 증거 과장 금지
+- 금지어: 직·간접 효능 표현(효과, 효능, 개선, 리프팅, 안티에이징, 치료, 치유, 회복, 통증 완화, 스트레스 완화, 임상 입증 등) 사용 금지.
+  · 대신 '체감', '느낌', '개인차' 표현으로 완화.
+
+[본문 원문]
+[ORIGINAL_BLOG_CONTENT_START]
+{blog_text}
+[ORIGINAL_BLOG_CONTENT_END]
+
+[반드시 포함할 JSON 스키마]
+- 아래 키를 모두 포함하라. 값이 없으면 빈 배열/빈 문자열/0/false 등으로 채워라.
+- 타입을 반드시 지켜라.
+- scores는 0~100 정수.
+
+스키마 예시(형태 참고용):
+{json.dumps(json_schema_hint, ensure_ascii=False)}
+
+[출력 형식]
+- 출력은 오직 JSON 1개 객체만 허용한다.
+- ```json 같은 코드펜스, 설명 문장, 마크다운, 목록, HTML을 절대 포함하지 마라.
+- 반드시 {{"summary": ...}} 로 시작하는 JSON 객체로 출력하라.
+"""
+
+    last_text = ""
+    for attempt in range(max_retries + 1):
+        try:
+            last_text = _gemini_generate_text(prompt)
+            json_text = _extract_json_object(last_text)
+            data = _safe_json_loads(json_text)
+            if isinstance(data, dict):
+                return data, last_text
+        except Exception as e:
+            last_text = f"(Gemini JSON 분석 호출 실패: {e})"
+
+        # Retry instruction: ask to output JSON only.
+        prompt = (
+            prompt
+            + "\n\n[재시도 지시]\n방금 출력은 JSON 형식이 아니거나 파싱에 실패했다. 설명 없이 JSON 1개 객체만 다시 출력하라."
+        )
+
+    return None, last_text
+
+
 def analyze_blog_post(
     blog_text: str,
     core_keyword: str,
@@ -324,7 +479,7 @@ def analyze_blog_post(
 
 [기준]
 - 문단수: 180~230개 <p> 문단 선호
-- 단어수: 650~700 단어 목표(±10~15% 허용)
+- 단어수: 650~700 단어 목표(±10~15%% 허용)
 - 서론 100자 내:
   · 핵심 키워드 ≥ 1회
   · 제품명 또는 주요 브랜딩 키워드 ≥ 1회
@@ -379,10 +534,8 @@ def analyze_blog_post(
 """
 
     try:
-        model = genai.GenerativeModel(GEMINI_MODEL_NAME)
-        response = model.generate_content(analysis_prompt)
-        text = response.text or ""
-        return text.strip()
+        text = _gemini_generate_text(analysis_prompt)
+        return text
     except Exception as e:
         raise RuntimeError(f"블로그 분석 Gemini 호출 실패: {e}")
 
