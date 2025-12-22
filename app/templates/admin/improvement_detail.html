@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}관리자 - 개선요청 상세{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold">개선요청 상세</h1>
+      <p class="text-sm text-gray-500 mt-1">ID: {{ item.id if item else "-" }}</p>
+    </div>
+
+    <a href="/admin/improvements"
+       class="inline-flex items-center rounded-lg border px-3 py-2 text-sm hover:bg-gray-50">
+      목록으로
+    </a>
+  </div>
+
+  {% if error %}
+    <div class="mt-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+      {{ error }}
+    </div>
+  {% endif %}
+
+  {% if item %}
+  <!-- Meta -->
+  <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="rounded-xl border bg-white p-4">
+      <div class="text-xs text-gray-500">회사명</div>
+      <div class="mt-1 font-semibold">{{ item.company_name or "-" }}</div>
+    </div>
+    <div class="rounded-xl border bg-white p-4">
+      <div class="text-xs text-gray-500">담당자</div>
+      <div class="mt-1 font-semibold">{{ item.contact_name or "-" }}</div>
+    </div>
+    <div class="rounded-xl border bg-white p-4">
+      <div class="text-xs text-gray-500">전화</div>
+      <div class="mt-1 font-semibold">{{ item.phone or "-" }}</div>
+    </div>
+    <div class="rounded-xl border bg-white p-4">
+      <div class="text-xs text-gray-500">이메일</div>
+      <div class="mt-1 font-semibold">{{ item.email or "-" }}</div>
+    </div>
+    <div class="rounded-xl border bg-white p-4 md:col-span-2">
+      <div class="text-xs text-gray-500">키워드</div>
+      <div class="mt-1 font-semibold">{{ item.core_keyword }}</div>
+    </div>
+    <div class="rounded-xl border bg-white p-4 md:col-span-2">
+      <div class="text-xs text-gray-500">블로그 URL</div>
+      <div class="mt-1">
+        <a class="text-blue-600 hover:underline break-all" href="{{ item.blog_url }}" target="_blank" rel="noreferrer">
+          {{ item.blog_url }}
+        </a>
+      </div>
+    </div>
+    <div class="rounded-xl border bg-white p-4 md:col-span-2">
+      <div class="text-xs text-gray-500">생성일</div>
+      <div class="mt-1 font-semibold">{{ item.created_at }}</div>
+    </div>
+  </div>
+
+  <!-- Analysis -->
+  <div class="mt-6 rounded-xl border bg-white p-4">
+    <div class="flex items-center justify-between gap-4">
+      <h2 class="font-bold">분석 결과 (Markdown 원문)</h2>
+      <button
+        type="button"
+        class="rounded-lg border px-3 py-2 text-sm hover:bg-gray-50"
+        onclick="copyAnalysis()">
+        복사
+      </button>
+    </div>
+
+    <pre id="analysisBox" class="mt-4 whitespace-pre-wrap break-words text-sm leading-6 text-gray-800">{{ item.analysis_md or "" }}</pre>
+  </div>
+
+  <script>
+    function copyAnalysis(){
+      const text = document.getElementById('analysisBox').innerText || '';
+      navigator.clipboard.writeText(text);
+    }
+  </script>
+  {% endif %}
+</div>
+{% endblock %}

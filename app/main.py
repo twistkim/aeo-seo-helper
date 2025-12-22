@@ -19,7 +19,7 @@ from sqlalchemy import Column, Integer, BigInteger, String, Text, DateTime, Bool
 from .database import init_db, get_db
 from . import schemas, crud, models
 from .auth import create_access_token, decode_access_token
-from .dependencies import get_current_active_user
+from .dependencies import get_current_active_user, require_admin_user
 from . import services
 
 
@@ -715,5 +715,76 @@ async def mypage(
             "articles": articles,
             "logs": logs,
             "improvement_requests": improvement_requests,
+        },
+    )
+
+
+# ==========================
+# Admin: Improvement 요청 전체 조회/상세
+# ==========================
+@app.get("/admin/improvements", response_class=HTMLResponse)
+async def admin_improvements_list(
+    request: Request,
+    q: Optional[str] = None,
+    page: int = 1,
+    db: AsyncSession = Depends(get_db),
+    admin_user: models.User = Depends(require_admin_user),
+):
+    """최고관리자 전용: improvement_requests 전체 목록."""
+    if page < 1:
+        page = 1
+
+    limit = 50
+    offset = (page - 1) * limit
+
+    items = await crud.list_all_improvement_requests(
+        db,
+        limit=limit,
+        offset=offset,
+        q=q,
+    )
+
+    return templates.TemplateResponse(
+        "admin/improvement_list.html",
+        {
+            "request": request,
+            "user": admin_user,
+            "items": items,
+            "q": q or "",
+            "page": page,
+            "limit": limit,
+        },
+    )
+
+
+@app.get("/admin/improvements/{request_id}", response_class=HTMLResponse)
+async def admin_improvements_detail(
+    request: Request,
+    request_id: int,
+    db: AsyncSession = Depends(get_db),
+    admin_user: models.User = Depends(require_admin_user),
+):
+    """최고관리자 전용: improvement_requests 상세."""
+    item = await crud.get_improvement_request_by_id(db, request_id=request_id)
+    if not item:
+        # 템플릿에서 예쁘게 표시하고 싶으면 별도 404 템플릿을 만들어도 됨
+        return templates.TemplateResponse(
+            "admin/improvement_detail.html",
+            {
+                "request": request,
+                "user": admin_user,
+                "item": None,
+                "error": "요청 내역을 찾을 수 없습니다.",
+            },
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+
+    return templates.TemplateResponse(
+        "admin/improvement_detail.html",
+        {
+            "request": request,
+            "user": admin_user,
+            "item": item,
+            "error": None,
         },
     )

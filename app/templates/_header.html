@@ -21,6 +21,12 @@
         <a href="/monitoring" class="text-slate-600 hover:text-sky-600">순위 모니터링</a>
         <a href="/mypage" class="text-slate-600 hover:text-sky-600">마이페이지</a>
 
+        {% if user.email and (user.email|lower) == 'black00khs@naver.com' %}
+          <a href="/admin/improvements" class="text-slate-600 hover:text-sky-600">
+            관리자(문의)
+          </a>
+        {% endif %}
+
         <a
           href="/logout"
           class="inline-flex items-center px-3 py-1.5 rounded-lg bg-slate-900 text-white hover:bg-slate-800"

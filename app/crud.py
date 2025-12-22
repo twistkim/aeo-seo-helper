@@ -1,7 +1,8 @@
 # app/crud.py
 from typing import Optional, List
+from datetime import datetime
 
-from sqlalchemy import select
+from sqlalchemy import select, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from . import models, schemas
@@ -217,4 +218,66 @@ async def list_user_improvement_requests(
         .order_by(models.ImprovementRequest.created_at.desc())
         .limit(limit)
     )
+    return result.scalars().all()
+
+
+# ==========================
+# Admin: Improvement 전체 조회/상세 조회
+# ==========================
+async def get_improvement_request_by_id(
+    db: AsyncSession,
+    request_id: int,
+) -> Optional[models.ImprovementRequest]:
+    """improvement_requests 단건 조회 (관리자 상세보기용)."""
+    result = await db.execute(
+        select(models.ImprovementRequest)
+        .where(models.ImprovementRequest.id == request_id)
+        .limit(1)
+    )
+    return result.scalar_one_or_none()
+
+
+async def list_all_improvement_requests(
+    db: AsyncSession,
+    limit: int = 50,
+    offset: int = 0,
+    q: Optional[str] = None,
+    date_from: Optional[datetime] = None,
+    date_to: Optional[datetime] = None,
+) -> List[models.ImprovementRequest]:
+    """전체 improvement_requests 조회 (최신순).
+
+    - q: 회사명/담당자/전화/이메일/키워드/URL 에 대해 부분일치 검색
+    - date_from/date_to: created_at 기준 범위 필터
+    - limit/offset: 페이지네이션
+    """
+    stmt = select(models.ImprovementRequest)
+
+    # 검색어 필터
+    if q:
+        like = f"%{q.strip()}%"
+        stmt = stmt.where(
+            or_(
+                models.ImprovementRequest.company_name.ilike(like),
+                models.ImprovementRequest.contact_name.ilike(like),
+                models.ImprovementRequest.phone.ilike(like),
+                models.ImprovementRequest.email.ilike(like),
+                models.ImprovementRequest.core_keyword.ilike(like),
+                models.ImprovementRequest.blog_url.ilike(like),
+            )
+        )
+
+    # 날짜 범위 필터
+    if date_from:
+        stmt = stmt.where(models.ImprovementRequest.created_at >= date_from)
+    if date_to:
+        stmt = stmt.where(models.ImprovementRequest.created_at <= date_to)
+
+    stmt = (
+        stmt.order_by(models.ImprovementRequest.created_at.desc())
+        .offset(offset)
+        .limit(limit)
+    )
+
+    result = await db.execute(stmt)
     return result.scalars().all()

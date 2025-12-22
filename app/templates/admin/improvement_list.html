@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}관리자 - 개선요청 목록{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-8">
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold">개선요청 전체 목록</h1>
+      <p class="text-sm text-gray-500 mt-1">최고관리자만 볼 수 있습니다.</p>
+    </div>
+
+    <a href="/improvement"
+       class="inline-flex items-center rounded-lg border px-3 py-2 text-sm hover:bg-gray-50">
+      개선 페이지로
+    </a>
+  </div>
+
+  <!-- Search -->
+  <form method="get" action="/admin/improvements" class="mt-6">
+    <div class="flex gap-2">
+      <input
+        type="text"
+        name="q"
+        value="{{ q }}"
+        placeholder="회사명/담당자/전화/이메일/키워드/URL 검색"
+        class="w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring"
+      />
+      <button
+        class="rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white hover:opacity-90">
+        검색
+      </button>
+    </div>
+    {% if q %}
+    <div class="mt-2 text-sm">
+      <a href="/admin/improvements" class="text-gray-600 hover:underline">검색 초기화</a>
+    </div>
+    {% endif %}
+  </form>
+
+  <!-- List -->
+  <div class="mt-6 overflow-x-auto rounded-xl border bg-white">
+    <table class="min-w-full text-left text-sm">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="px-4 py-3">ID</th>
+          <th class="px-4 py-3">회사/담당자</th>
+          <th class="px-4 py-3">연락처</th>
+          <th class="px-4 py-3">키워드</th>
+          <th class="px-4 py-3">URL</th>
+          <th class="px-4 py-3">일시</th>
+          <th class="px-4 py-3"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y">
+        {% if items and items|length > 0 %}
+          {% for it in items %}
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-3 font-mono text-xs text-gray-600">{{ it.id }}</td>
+
+            <td class="px-4 py-3">
+              <div class="font-semibold text-gray-900">
+                {{ it.company_name or "-" }}
+              </div>
+              <div class="text-xs text-gray-500">
+                {{ it.contact_name or "-" }}
+              </div>
+            </td>
+
+            <td class="px-4 py-3">
+              <div class="text-gray-900">{{ it.phone or "-" }}</div>
+              <div class="text-xs text-gray-500">{{ it.email or "-" }}</div>
+            </td>
+
+            <td class="px-4 py-3">
+              <div class="font-medium">{{ it.core_keyword }}</div>
+            </td>
+
+            <td class="px-4 py-3 max-w-[260px]">
+              <a class="text-blue-600 hover:underline break-all" href="{{ it.blog_url }}" target="_blank" rel="noreferrer">
+                {{ it.blog_url }}
+              </a>
+            </td>
+
+            <td class="px-4 py-3 text-gray-600">
+              {{ it.created_at }}
+            </td>
+
+            <td class="px-4 py-3 text-right">
+              <a
+                href="/admin/improvements/{{ it.id }}"
+                class="inline-flex items-center rounded-lg border px-3 py-2 text-xs font-semibold hover:bg-gray-50">
+                상세보기
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td class="px-4 py-10 text-center text-gray-500" colspan="7">
+              데이터가 없습니다.
+            </td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination (단순) -->
+  <div class="mt-6 flex items-center justify-between">
+    <div class="text-sm text-gray-600">
+      Page {{ page }}
+    </div>
+    <div class="flex gap-2">
+      {% set prev_page = page - 1 %}
+      {% set next_page = page + 1 %}
+
+      <a
+        class="rounded-lg border px-3 py-2 text-sm hover:bg-gray-50 {% if page <= 1 %}pointer-events-none opacity-40{% endif %}"
+        href="/admin/improvements?page={{ prev_page }}{% if q %}&q={{ q }}{% endif %}">
+        이전
+      </a>
+
+      <a
+        class="rounded-lg border px-3 py-2 text-sm hover:bg-gray-50 {% if not items or items|length < limit %}pointer-events-none opacity-40{% endif %}"
+        href="/admin/improvements?page={{ next_page }}{% if q %}&q={{ q }}{% endif %}">
+        다음
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
