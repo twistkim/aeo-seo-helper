@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AEO-Flow | SEO+AEO 올인원 콘텐츠 엔진</title>
+  <meta name="description" content="네이버 검색 상위 노출부터 AI 답변 엔진(AEO)의 추천까지, 기업의 디지털 권위를 구축하는 올인원 콘텐츠 엔진 AEO-Flow." />
+
+</head>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Prevent awkward mid-word breaks (especially for Korean + mixed English tokens)
+       while still allowing very long strings to wrap instead of overflowing. */
+    html { word-break: keep-all; }
+    body { overflow-wrap: break-word; }
+    /* Avoid automatic hyphenation that can look like word “cutting” */
+    h1, h2, h3, p, a, li { hyphens: none; }
+  </style>
+</head>
+
+<body class="bg-white text-slate-900 break-keep">
+  <!-- Top Notice / Scarcity Bar -->
+  <div class="w-full bg-slate-900 text-white">
+    <div class="mx-auto max-w-6xl px-4 py-2 text-xs sm:text-sm flex items-center justify-between gap-3">
+      <p class="leading-relaxed">
+        런칭 혜택(예시): <span class="font-semibold">2026년 1월 31일까지</span> 데모 신청 시 온보딩 지원 포함
+        <span class="opacity-80">(정책 확정 후 문구 고정)</span>
+      </p>
+      <a href="#cta" class="shrink-0 inline-flex items-center rounded-lg bg-white/10 px-3 py-1.5 font-medium hover:bg-white/15">
+        데모 신청
+      </a>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-slate-200">
+    <div class="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <!-- 이미지: 서비스 로고(심플한 워드마크 + 아이콘) -->
+        <div class="h-9 w-9 rounded-xl bg-slate-900"></div>
+        <div class="leading-tight">
+          <p class="text-sm font-semibold">AEO-Flow</p>
+          <p class="text-xs text-slate-500">SEO + AEO 올인원 콘텐츠 엔진</p>
+        </div>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-6 text-sm text-slate-600">
+        <a href="#problem" class="hover:text-slate-900">문제</a>
+        <a href="#solution" class="hover:text-slate-900">솔루션</a>
+        <a href="#features" class="hover:text-slate-900">특장점</a>
+        <a href="#pricing" class="hover:text-slate-900">가격</a>
+        <a href="#faq" class="hover:text-slate-900">FAQ</a>
+      </nav>
+
+      <a href="#cta" class="inline-flex items-center rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
+        무료 데모 요청
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden">
+      <div class="mx-auto max-w-6xl px-4 py-12 sm:py-16">
+        <div class="grid gap-10 lg:grid-cols-2 lg:items-center">
+          <div class="space-y-6">
+            <div class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-600">
+              <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+              검색하는 시대에서 <span class="font-semibold text-slate-900">추천받는 시대</span>로
+            </div>
+
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.15] sm:leading-[1.12] lg:leading-[1.1]">
+                네이버 상위 노출부터<br class="hidden sm:block" />
+                AI 답변 엔진의 추천까지<br />
+                <span class="text-slate-900">기업의 디지털 권위를<br /> 구축</span>하세요
+            </h1>
+
+            <p class="text-base sm:text-lg text-slate-600 leading-relaxed">
+              AEO-Flow는 기존 검색 엔진(SEO)과 최신 AI 답변 엔진(AEO)의 로직을 동시에 고려해
+              <span class="font-semibold text-slate-900">브랜드가 가장 먼저 언급되는 구조</span>를 만드는 올인원 콘텐츠 엔진입니다.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+              <a href="#cta" class="inline-flex justify-center items-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800">
+                무료 데모 요청
+              </a>
+              <a href="#solution" class="inline-flex justify-center items-center rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                어떻게 작동하나요?
+              </a>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4">
+              <div class="rounded-2xl border border-slate-200 p-4">
+                <p class="text-xs text-slate-500">Point 1</p>
+                <p class="mt-1 font-semibold">하이브리드 최적화</p>
+                <p class="mt-2 text-sm text-slate-600">SEO + AEO를 동시에 설계해 한 번에 점유율을 올립니다.</p>
+              </div>
+              <div class="rounded-2xl border border-slate-200 p-4">
+                <p class="text-xs text-slate-500">Point 2</p>
+                <p class="mt-1 font-semibold">구조화된 콘텐츠 설계</p>
+                <p class="mt-2 text-sm text-slate-600">AI가 추출·인용하기 쉬운 “기계 친화 구조”를 자동 가이드합니다.</p>
+              </div>
+              <div class="rounded-2xl border border-slate-200 p-4">
+                <p class="text-xs text-slate-500">Point 3</p>
+                <p class="mt-1 font-semibold">실시간 지표 모니터링</p>
+                <p class="mt-2 text-sm text-slate-600">네이버 순위 + AI 답변 내 브랜드 언급을 한 화면에서 추적합니다.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="relative">
+            <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6 sm:p-8">
+              <!-- 이미지: 대시보드 스크린샷(검색 순위 + AI 언급 추이 차트) -->
+              <div class="rounded-2xl bg-white border border-slate-200 p-5">
+                <div class="flex items-center justify-between">
+                  <p class="text-sm font-semibold">SEO AEO 시스템 예시 대시보드</p>
+                  <span class="text-xs text-slate-500">실시간 업데이트</span>
+                </div>
+
+                <div class="mt-4 grid gap-4">
+                  <div class="rounded-xl border border-slate-200 p-4">
+                    <p class="text-xs text-slate-500">네이버 통합검색 순위</p>
+                    <p class="mt-1 text-lg font-bold">#12 → #2</p>
+                    <p class="mt-2 text-xs text-slate-500">* 실제 수치는 고객 데이터 기반으로 표시</p>
+                  </div>
+                  <div class="rounded-xl border border-slate-200 p-4">
+                    <p class="text-xs text-slate-500">AI 답변 내 브랜드 언급</p>
+                    <p class="mt-1 text-lg font-bold">언급 빈도 +38%</p>
+                    <p class="mt-2 text-xs text-slate-500">ChatGPT / Gemini / CUE 등 추적</p>
+                  </div>
+                  <div class="rounded-xl border border-slate-200 p-4">
+                    <p class="text-xs text-slate-500">자동 원고 생성</p>
+                    <p class="mt-1 text-sm font-semibold text-slate-900">AI가 노출이 되는 원고를 작성</p>
+                    <p class="mt-2 text-xs text-slate-500">* 상위권 블로그를 학습하여 기준 적립</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- <div class="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-500">
+              <div class="rounded-2xl border border-slate-200 p-4">
+                <p class="font-semibold text-slate-800">손실회피</p>
+                <p class="mt-1">AI 답변에서 누락되는 순간, 고객의 “첫 인상”을 잃습니다.</p>
+              </div>
+              <div class="rounded-2xl border border-slate-200 p-4">
+                <p class="font-semibold text-slate-800">장벽 제거</p>
+                <p class="mt-1">데모로 먼저 확인하고, 필요할 때만 구독하세요.</p>
+              </div>
+            </div> -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section id="problem" class="border-t border-slate-200 bg-white">
+      <div class="mx-auto max-w-6xl px-4 py-12 sm:py-16">
+        <div class="max-w-3xl">
+          <p class="text-sm font-semibold text-slate-700">지금 마케팅 팀이 겪는 현실</p>
+          <h2 class="mt-2 text-2xl sm:text-3xl font-extrabold tracking-tight">“SEO는 익숙한데, AEO는 감이 없다”</h2>
+          <p class="mt-4 text-slate-600 leading-relaxed">
+            블로그/광고 효율은 떨어지고, AI 검색/챗봇이 커지면서
+            <span class="font-semibold text-slate-900">“우리 브랜드가 AI 답변에서 누락되면 어쩌지?”</span>라는 불안이 커졌습니다.
+            문제는 AEO는 ‘감’이 아니라 <span class="font-semibold text-slate-900">구조와 데이터</span>가 필요하다는 점입니다.
+          </p>
+        </div>
+
+        <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="rounded-3xl border border-slate-200 p-6">
+            <p class="text-xs text-slate-500">Pain 01</p>
+            <p class="mt-2 font-semibold">기술적 격차</p>
+            <p class="mt-2 text-sm text-slate-600">SEO는 익숙하지만, AI에게 선택받는 방법(AEO)은 전략이 전무합니다.</p>
+          </div>
+          <div class="rounded-3xl border border-slate-200 p-6">
+            <p class="text-xs text-slate-500">Pain 02</p>
+            <p class="mt-2 font-semibold">성과 측정의 한계</p>
+            <p class="mt-2 text-sm text-slate-600">우리 콘텐츠가 AI 검색 결과에 얼마나 노출되는지 확인할 방법이 없어 답답합니다.</p>
+          </div>
+          <div class="rounded-3xl border border-slate-200 p-6">
+            <p class="text-xs text-slate-500">Pain 03</p>
+            <p class="mt-2 font-semibold">콘텐츠 제작 비효율</p>
+            <p class="mt-2 text-sm text-slate-600">열심히 만들어도 순위에서 밀리거나, AI가 엉뚱한 정보를 말해 브랜드가 손상됩니다.</p>
+          </div>
+          <div class="rounded-3xl border border-slate-200 p-6">
+            <p class="text-xs text-slate-500">Pain 04</p>
+            <p class="mt-2 font-semibold">채널 파편화</p>
+            <p class="mt-2 text-sm text-slate-600">네이버, 구글, 각종 AI 챗봇… 관리 채널이 늘어 리소스가 부족합니다.</p>
+          </div>
+          <div class="rounded-3xl border border-slate-200 p-6 sm:col-span-2 lg:col-span-2">
+            <p class="text-xs text-slate-500">Pain 05</p>
+            <p class="mt-2 font-semibold">광고비 부담</p>
+            <p class="mt-2 text-sm text-slate-600">
+              SA/DA 비용은 오르는데 Organic 유입은 줄어듭니다.
+              이제는 <span class="font-semibold text-slate-900">“지속 가능한 점유율”</span>이 절실합니다.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section id="solution" class="border-t border-slate-200 bg-slate-50">
+      <div class="mx-auto max-w-6xl px-4 py-12 sm:py-16">
+        <div class="grid gap-10 lg:grid-cols-2 lg:items-start">
+          <div class="space-y-4">
+            <p class="text-sm font-semibold text-slate-700">해결 방법</p>
+            <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+              AEO-Flow: “설계 및 진단 → 제작 → 배포 → 측정”을 한 흐름으로
+            </h2>
+            <p class="text-slate-600 leading-relaxed">
+              AEO-Flow는 기업의 디지털 권위를 만들기 위해,
+              검색(SEO)과 AI 답변(AEO)을 동시에 고려한 콘텐츠 엔진을 제공합니다.
+              핵심은 단순한 글 생산이 아니라 <span class="font-semibold text-slate-900">AI가 인용하기 쉬운 구조</span>로 만드는 것입니다.
+            </p>
+
+            <div class="mt-6 rounded-3xl border border-slate-200 bg-white p-6">
+              <p class="text-sm font-semibold">이 페이지에서 얻을 것</p>
+              <ul class="mt-3 space-y-2 text-sm text-slate-700">
+                <li class="flex gap-2"><span class="mt-1 h-2 w-2 rounded-full bg-slate-900"></span>AI 답변에서 누락될 리스크를 줄이는 ‘구조’</li>
+                <li class="flex gap-2"><span class="mt-1 h-2 w-2 rounded-full bg-slate-900"></span>네이버 순위와 AI 언급을 함께 보는 ‘측정’</li>
+                <li class="flex gap-2"><span class="mt-1 h-2 w-2 rounded-full bg-slate-900"></span>채널 파편화를 줄여 리소스를 아끼는 ‘흐름’</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8">
+            <p class="text-sm font-semibold">작동 흐름(예시)</p>
+            <ol class="mt-4 space-y-4">
+              <li class="flex gap-3">
+                <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-bold">1</span>
+                <div>
+                  <p class="font-semibold">하이브리드 진단(SEO + AEO)</p>
+                  <p class="mt-1 text-sm text-slate-600">키워드/주제/브랜드 정보를 기반으로 검색과 AI 관점의 gap을 확인합니다.</p>
+                </div>
+              </li>
+              <li class="flex gap-3">
+                <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-bold">2</span>
+                <div>
+                  <p class="font-semibold">구조화 설계(기계 친화 구조)</p>
+                  <p class="mt-1 text-sm text-slate-600">AI가 인용하기 쉬운 답변형 구조, 요약, 근거 블록을 자동 가이드합니다.</p>
+                </div>
+              </li>
+              <li class="flex gap-3">
+                <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-bold">3</span>
+                <div>
+                  <p class="font-semibold">콘텐츠 제작 & 운영 표준화</p>
+                  <p class="mt-1 text-sm text-slate-600">팀이 흔들리지 않도록 템플릿/체크리스트로 품질을 일정하게 유지합니다.</p>
+                </div>
+              </li>
+              <li class="flex gap-3">
+                <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-bold">4</span>
+                <div>
+                  <p class="font-semibold">성과 측정(순위 + AI 언급)</p>
+                  <p class="mt-1 text-sm text-slate-600">네이버 순위와 주요 AI에서의 언급을 데이터로 시각화합니다.</p>
+                </div>
+              </li>
+            </ol>
+
+            <div class="mt-6 flex flex-col sm:flex-row gap-3">
+              <a href="#cta" class="inline-flex justify-center items-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800">
+                무료 데모로 확인하기
+              </a>
+              <a href="#features" class="inline-flex justify-center items-center rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                특장점 보기
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features / Why It Works Section -->
+    <section id="features" class="border-t border-slate-200 bg-white">
+      <div class="mx-auto max-w-6xl px-4 py-12 sm:py-16">
+        <div class="max-w-3xl">
+          <p class="text-sm font-semibold text-slate-700">왜 효과적인가</p>
+          <h2 class="mt-2 text-2xl sm:text-3xl font-extrabold tracking-tight">
+            AI는 “잘 쓴 글”보다 “잘 구조화된 정보”를 좋아합니다
+          </h2>
+          <p class="mt-4 text-slate-600 leading-relaxed">
+            검색은 키워드와 문서 신호를 보지만, AI 답변 엔진은
+            <span class="font-semibold text-slate-900">정보를 ‘추출’하고 ‘인용’</span>합니다.
+            그래서 AEO-Flow는 콘텐츠를 기계 친화적으로 설계해 “추천받는 구조”를 만듭니다.
+          </p>
+        </div>
+
+        <div class="mt-8 grid gap-4 lg:grid-cols-3">
+          <div class="rounded-3xl border border-slate-200 p-6">
+            <p class="text-xs text-slate-500">SEO + AEO</p>
+            <p class="mt-2 text-lg font-bold">하이브리드 최적화</p>
+            <p class="mt-2 text-sm text-slate-600">
+              기존 검색 알고리즘과 AI 답변 로직을 동시에 고려해,
+              한 채널만 최적화했을 때 생기는 “빈틈”을 줄입니다.
+            </p>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 p-6">
+            <p class="text-xs text-slate-500">Structured Data 관점</p>
+            <p class="mt-2 text-lg font-bold">구조화된 콘텐츠 설계</p>
+            <p class="mt-2 text-sm text-slate-600">
+              FAQ형 답변, 핵심 요약, 근거 블록, 정의/비교/절차 구조를 통해
+              AI가 쉽게 인용할 수 있게 만듭니다.
+            </p>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 p-6">
+            <p class="text-xs text-slate-500">Measurement</p>
+            <p class="mt-2 text-lg font-bold">실시간 지표 모니터링</p>
+            <p class="mt-2 text-sm text-slate-600">
+              “보이는 것만 개선된다”는 원칙대로,
+              네이버 순위 + AI 언급/노출을 한 화면에서 추적합니다.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-10 rounded-3xl bg-slate-50 border border-slate-200 p-6 sm:p-8">
+          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div class="space-y-2">
+              <p class="text-sm font-semibold">할루시네이션(엉뚱한 정보) 리스크를 줄이는 접근</p>
+              <p class="text-sm text-slate-600 leading-relaxed">
+                AI가 참조할 “정확한 원천(원문 구조)”을 제공할수록,
+                브랜드 정보가 왜곡될 가능성이 줄어듭니다.
+                AEO-Flow는 <span class="font-semibold text-slate-900">정확한 정보 블록을 고정</span>하는 방식으로 운영 품질을 표준화합니다.
+              </p>
+            </div>
+            <a href="#cta" class="inline-flex justify-center items-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800">
+              우리 브랜드 진단 받기
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Social Proof Section -->
+    <section id="proof" class="border-t border-slate-200 bg-white">
+      <div class="mx-auto max-w-6xl px-4 py-12 sm:py-16">
+        <div class="max-w-3xl">
+          <p class="text-sm font-semibold text-slate-700">신뢰 요소</p>
+          <h2 class="mt-2 text-2xl sm:text-3xl font-extrabold tracking-tight">숫자와 사례는 “확정되는 즉시” 더 강해집니다</h2>
+          <p class="mt-4 text-slate-600 leading-relaxed">
+            아직 공개 가능한 수치가 없더라도 괜찮습니다.
+            이 섹션은 <span class="font-semibold text-slate-900">고객사 수, 순위 상승, 언급 증가</span> 같은 근거를 나중에 바로 꽂아 넣을 수 있도록 설계해두었습니다.
+          </p>
+        </div>
+
+        <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="rounded-3xl border border-slate-200 p-6">
+            <p class="text-xs text-slate-500">지표 예시</p>
+            <p class="mt-2 text-2xl font-extrabold">[+00%]</p>
+            <p class="mt-2 text-sm text-slate-600">AI 답변 내 브랜드 언급 증가</p>
+          </div>
+          <div class="rounded-3xl border border-slate-200 p-6">
+            <p class="text-xs text-slate-500">지표 예시</p>
+            <p class="mt-2 text-2xl font-extrabold">[#00 → #00]</p>
+            <p class="mt-2 text-sm text-slate-600">네이버 통합검색 순위 개선</p>
+          </div>
+          <div class="rounded-3xl border border-slate-200 p-6">
+            <p class="text-xs text-slate-500">지표 예시</p>
+            <p class="mt-2 text-2xl font-extrabold">[-00%]</p>
+            <p class="mt-2 text-sm text-slate-600">콘텐츠 운영 리소스 절감</p>
+          </div>
+          <div class="rounded-3xl border border-slate-200 p-6">
+            <p class="text-xs text-slate-500">지표 예시</p>
+            <p class="mt-2 text-2xl font-extrabold">[00개]</p>
+            <p class="mt-2 text-sm text-slate-600">운영 템플릿/체크리스트 제공</p>
+          </div>
+        </div>
+
+        <div class="mt-8 grid gap-4 lg:grid-cols-3">
+          <div class="rounded-3xl border border-slate-200 p-6">
+            <p class="text-sm font-semibold">후기(예시)</p>
+            <p class="mt-3 text-sm text-slate-700 leading-relaxed">
+              “SEO는 해왔는데 AEO는 막막했어요. 구조를 바꾸니 팀 내부 기준이 생기고,
+              무엇을 측정해야 하는지 명확해졌습니다.”
+            </p>
+            <p class="mt-3 text-xs text-slate-500">— 마케팅 디렉터 (업종/회사명 자리표시자)</p>
+          </div>
+          <div class="rounded-3xl border border-slate-200 p-6">
+            <p class="text-sm font-semibold">후기(예시)</p>
+            <p class="mt-3 text-sm text-slate-700 leading-relaxed">
+              “AI 답변에서 브랜드가 누락될까 불안했는데,
+              대시보드로 노출을 확인하니 의사결정이 빨라졌어요.”
+            </p>
+            <p class="mt-3 text-xs text-slate-500">— CMO (업종/회사명 자리표시자)</p>
+          </div>
+          <div class="rounded-3xl border border-slate-200 p-6">
+            <p class="text-sm font-semibold">후기(예시)</p>
+            <p class="mt-3 text-sm text-slate-700 leading-relaxed">
+              “채널이 너무 많아 관리가 힘들었는데,
+              SEO+AEO를 한 흐름으로 운영하니 팀 리소스가 확실히 줄었습니다.”
+            </p>
+            <p class="mt-3 text-xs text-slate-500">— 브랜드 매니저 (업종/회사명 자리표시자)</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="border-t border-slate-200 bg-slate-50">
+      <div class="mx-auto max-w-6xl px-4 py-12 sm:py-16">
+        <div class="max-w-3xl">
+          <p class="text-sm font-semibold text-slate-700">가격/구성</p>
+          <h2 class="mt-2 text-2xl sm:text-3xl font-extrabold tracking-tight">구독형으로, 필요한 만큼만</h2>
+          <p class="mt-4 text-slate-600 leading-relaxed">
+            팀 규모와 목표에 맞춰 선택할 수 있도록 3가지 구성을 제안합니다.
+            <span class="font-semibold text-slate-900">데모로 먼저 확인</span>하고 결정하세요.
+          </p>
+        </div>
+
+        <div class="mt-8 grid gap-4 lg:grid-cols-3">
+          <div class="rounded-3xl border border-slate-200 bg-white p-7">
+            <p class="text-sm font-semibold">Starter</p>
+            <p class="mt-2 text-3xl font-extrabold">₩ [가격]</p>
+            <p class="mt-1 text-sm text-slate-500">소규모 팀/파일럿</p>
+            <ul class="mt-6 space-y-2 text-sm text-slate-700">
+              <li class="flex gap-2"><span class="mt-1.5 h-2 w-2 rounded-full bg-slate-900"></span>기본 SEO+AEO 진단</li>
+              <li class="flex gap-2"><span class="mt-1.5 h-2 w-2 rounded-full bg-slate-900"></span>구조화 템플릿 제공</li>
+              <li class="flex gap-2"><span class="mt-1.5 h-2 w-2 rounded-full bg-slate-900"></span>핵심 지표 대시보드(기본)</li>
+            </ul>
+            <a href="#cta" class="mt-7 inline-flex w-full justify-center items-center rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold hover:bg-slate-50">
+              데모로 확인
+            </a>
+          </div>
+
+          <div class="rounded-3xl border border-slate-900 bg-white p-7 shadow-sm">
+            <div class="flex items-center justify-between">
+              <p class="text-sm font-semibold">Pro</p>
+              <span class="rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold text-white">추천</span>
+            </div>
+            <p class="mt-2 text-3xl font-extrabold">₩ [가격]</p>
+            <p class="mt-1 text-sm text-slate-500">마케팅 조직/성장 단계</p>
+            <ul class="mt-6 space-y-2 text-sm text-slate-700">
+              <li class="flex gap-2"><span class="mt-1.5 h-2 w-2 rounded-full bg-slate-900"></span>하이브리드 최적화 가이드(고급)</li>
+              <li class="flex gap-2"><span class="mt-1.5 h-2 w-2 rounded-full bg-slate-900"></span>AI 인용 친화 구조 자동 체크</li>
+              <li class="flex gap-2"><span class="mt-1.5 h-2 w-2 rounded-full bg-slate-900"></span>AI 언급/노출 추적 대시보드</li>
+              <li class="flex gap-2"><span class="mt-1.5 h-2 w-2 rounded-full bg-slate-900"></span>운영 표준(체크리스트/가이드) 확장</li>
+            </ul>
+            <a href="#cta" class="mt-7 inline-flex w-full justify-center items-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800">
+              무료 데모 요청
+            </a>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 bg-white p-7">
+            <p class="text-sm font-semibold">Enterprise</p>
+            <p class="mt-2 text-3xl font-extrabold">문의</p>
+            <p class="mt-1 text-sm text-slate-500">중대형 기업/다수 브랜드</p>
+            <ul class="mt-6 space-y-2 text-sm text-slate-700">
+              <li class="flex gap-2"><span class="mt-1.5 h-2 w-2 rounded-full bg-slate-900"></span>조직 맞춤 지표/리포트</li>
+              <li class="flex gap-2"><span class="mt-1.5 h-2 w-2 rounded-full bg-slate-900"></span>온보딩/운영 지원(옵션)</li>
+              <li class="flex gap-2"><span class="mt-1.5 h-2 w-2 rounded-full bg-slate-900"></span>보안/권한/워크플로(옵션)</li>
+            </ul>
+            <a href="#cta" class="mt-7 inline-flex w-full justify-center items-center rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold hover:bg-slate-50">
+              도입 상담
+            </a>
+          </div>
+        </div>
+
+        <div class="mt-8 rounded-3xl border border-slate-200 bg-white p-6">
+          <!-- <p class="text-sm font-semibold">리스크 제거(예시)</p> -->
+          <ul class="mt-3 space-y-2 text-sm text-slate-700">
+            <li class="flex gap-2"><span class="mt-1.5 h-2 w-2 rounded-full bg-emerald-600"></span>데모로 먼저 확인 후 도입 결정</li>
+            <li class="flex gap-2"><span class="mt-1.5 h-2 w-2 rounded-full bg-emerald-600"></span>초기 운영 기준(템플릿/체크리스트) 제공</li>
+            <li class="flex gap-2"><span class="mt-1.5 h-2 w-2 rounded-full bg-emerald-600"></span>“측정 가능한 지표”로 개선 포인트를 명확히</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="border-t border-slate-200 bg-white">
+      <div class="mx-auto max-w-6xl px-4 py-12 sm:py-16">
+        <div class="max-w-3xl">
+          <p class="text-sm font-semibold text-slate-700">FAQ</p>
+          <h2 class="mt-2 text-2xl sm:text-3xl font-extrabold tracking-tight">자주 묻는 질문</h2>
+          <p class="mt-4 text-slate-600 leading-relaxed">
+            AEO-Flow는 “유행”이 아니라, 추천/답변 중심으로 바뀌는 검색 환경에서
+            기업이 살아남기 위한 <span class="font-semibold text-slate-900">운영 시스템</span>을 만드는 데 초점을 둡니다.
+          </p>
+        </div>
+
+        <div class="mt-8 grid gap-4 lg:grid-cols-2">
+          <div class="rounded-3xl border border-slate-200 p-6">
+            <p class="font-semibold">Q. AEO는 SEO랑 뭐가 다른가요?</p>
+            <p class="mt-2 text-sm text-slate-600 leading-relaxed">
+              SEO는 “검색 결과에서 클릭되도록” 최적화하는 반면,
+              AEO는 “AI가 답변을 만들 때 내 브랜드를 인용/추천하도록” 구조를 설계합니다.
+              AEO-Flow는 둘 다를 동시에 고려합니다.
+            </p>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 p-6">
+            <p class="font-semibold">Q. 우리 콘텐츠가 AI에 노출되는지 어떻게 확인하나요?</p>
+            <p class="mt-2 text-sm text-slate-600 leading-relaxed">
+              네이버 순위와 함께, 주요 AI 플랫폼에서의 브랜드 언급/노출 데이터를
+              대시보드로 확인할 수 있도록 설계합니다. (제공 범위는 기능 정책에 따라 조정)
+            </p>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 p-6">
+            <p class="font-semibold">Q. 할루시네이션(엉뚱한 정보)을 막을 수 있나요?</p>
+            <p class="mt-2 text-sm text-slate-600 leading-relaxed">
+              100% 차단을 단정할 수는 없지만,
+              AI가 참조할 수 있는 “정확한 원천 구조”를 제공하면 왜곡 가능성을 줄일 수 있습니다.
+              AEO-Flow는 정확한 정보 블록을 고정하는 운영 방식에 집중합니다.
+            </p>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 p-6">
+            <p class="font-semibold">Q. 도입에 팀 리소스가 많이 필요한가요?</p>
+            <p class="mt-2 text-sm text-slate-600 leading-relaxed">
+              목표는 “리소스 추가”가 아니라 “운영 표준화로 낭비 제거”입니다.
+              템플릿/체크리스트 기반으로 팀이 같은 기준으로 제작·개선하도록 설계합니다.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section id="cta" class="border-t border-slate-200 bg-slate-900 text-white">
+      <div class="mx-auto max-w-6xl px-4 py-12 sm:py-16">
+        <div class="grid gap-10 lg:grid-cols-2 lg:items-center">
+          <div class="space-y-4">
+            <p class="text-sm font-semibold text-white/80">최종 CTA</p>
+            <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+              “우리 브랜드, AI 답변에서 누락되면 얼마나 손해일까요?”
+            </h2>
+            <p class="text-white/80 leading-relaxed">
+              AEO-Flow로 SEO와 AEO를 한 흐름으로 운영하세요.
+              <span class="font-semibold text-white">무료 데모</span>에서 대시보드/구조 설계를 먼저 확인할 수 있습니다.
+            </p>
+
+            <div class="rounded-2xl bg-white/5 border border-white/10 p-5">
+              <p class="text-sm font-semibold">데모에서 확인할 것</p>
+              <ul class="mt-3 space-y-2 text-sm text-white/80">
+                <li class="flex gap-2"><span class="mt-1.5 h-2 w-2 rounded-full bg-white"></span>SEO + AEO 관점의 현재 상태 진단</li>
+                <li class="flex gap-2"><span class="mt-1.5 h-2 w-2 rounded-full bg-white"></span>AI 인용 친화 콘텐츠 구조 가이드 예시</li>
+                <li class="flex gap-2"><span class="mt-1.5 h-2 w-2 rounded-full bg-white"></span>네이버 순위 + AI 언급 추적 대시보드 예시</li>
+              </ul>
+              <p class="mt-3 text-xs text-white/60">
+                * 실제 제공 항목은 서비스 정책/플랜에 따라 조정될 수 있습니다.
+              </p>
+            </div>
+          </div>
+
+          <div class="rounded-3xl bg-white p-6 sm:p-8 text-slate-900">
+            <p class="text-lg font-extrabold">무료 데모 요청</p>
+            <p class="mt-2 text-sm text-slate-600">
+              아래 정보를 남겨주시면, 데모 일정/진단 안내를 보내드릴게요.
+            </p>
+
+            <form class="mt-6 space-y-4">
+              <div>
+                <label class="text-sm font-semibold" for="company">회사/브랜드명</label>
+                <input id="company" name="company" type="text" placeholder="예) AEO-Flow"
+                  class="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-slate-900" />
+              </div>
+
+              <div class="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label class="text-sm font-semibold" for="name">담당자명</label>
+                  <input id="name" name="name" type="text" placeholder="예) 홍길동"
+                    class="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-slate-900" />
+                </div>
+                <div>
+                  <label class="text-sm font-semibold" for="role">직함/역할</label>
+                  <input id="role" name="role" type="text" placeholder="예) 마케팅 팀장"
+                    class="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-slate-900" />
+                </div>
+              </div>
+
+              <div>
+                <label class="text-sm font-semibold" for="email">이메일</label>
+                <input id="email" name="email" type="email" placeholder="name@company.com"
+                  class="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-slate-900" />
+              </div>
+
+              <div>
+                <label class="text-sm font-semibold" for="message">현재 고민(선택)</label>
+                <textarea id="message" name="message" rows="4" placeholder="예) AI 답변에서 우리 브랜드가 잘 언급되는지 모르겠어요."
+                  class="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-slate-900"></textarea>
+              </div>
+
+              <button type="button"
+                class="w-full rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800">
+                데모 요청 제출(연동 전)
+              </button>
+
+              <p class="text-xs text-slate-500 leading-relaxed">
+                * 현재는 UI 템플릿입니다. 실제 전송은 서버(PHP/백엔드) 연동 후 활성화하세요.
+              </p>
+            </form>
+          </div>
+        </div>
+
+        <footer class="mt-12 border-t border-white/10 pt-6 text-xs text-white/60">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <p>© 2026 AEO-Flow. All rights reserved.</p>
+            <div class="flex gap-4">
+              <a href="#" class="hover:text-white">개인정보처리방침</a>
+              <a href="#" class="hover:text-white">이용약관</a>
+              <a href="#" class="hover:text-white">문의</a>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

@@ -150,13 +150,24 @@ async def get_optional_user_from_cookie(
 # ==========================
 # 기본 라우트
 # ==========================
-@app.get("/", response_class=HTMLResponse)
-async def root(request: Request):
-    """
-    루트 접근 시 /improvement 로 리다이렉트
-    """
-    return RedirectResponse(url="/improvement", status_code=status.HTTP_302_FOUND)
+# @app.get("/", response_class=HTMLResponse)
+# async def root(request: Request):
+#     """
+#     루트 접근 시 /improvement 로 리다이렉트
+#     """
+#     return RedirectResponse(url="/improvement", status_code=status.HTTP_302_FOUND)
 
+# from fastapi import Request
+# from fastapi.responses import HTMLResponse
+
+@app.get("/", response_class=HTMLResponse)
+async def index(request: Request):
+    return templates.TemplateResponse(
+        "index.html",
+        {
+            "request": request
+        }
+    )
 
 # ==========================
 # 회원가입 (Signup)
